@@ -11,6 +11,11 @@ namespace Assets.Scripts.Models.GameObjects
     public SpecialEffect Effect { set; get; }
     public GameObjectType Type { set; get; }
 
+    protected GameObjectLogical()
+    {
+      Effect = SpecialEffect.Empty;
+    }
+    
     public GameObjectType ResolveType()
     {
       return ResolveType(Type);

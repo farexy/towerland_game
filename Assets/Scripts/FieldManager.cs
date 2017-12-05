@@ -8,6 +8,8 @@ using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.Interfaces;
 using Assets.Scripts.Models.Resolvers;
 using Assets.Scripts.Models.State;
+using Assets.Scripts.Models.Stats;
+using Assets.Scripts.Network;
 using Helpers;
 using UnityEngine;
 using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
@@ -20,7 +22,8 @@ public class FieldManager : MonoBehaviour
 	public GameObject Road;
 	public GameObject Entrance;
 	public GameObject Castle;
-	
+
+	private Guid _battleId;
 	private ObjectPool _pool;
 	
 	public GameObjectType Selected { get; set; }
@@ -38,6 +41,8 @@ public class FieldManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		_battleId = LocalStorage.CurrentBattleId;
+		Side = LocalStorage.CurrentSide;
 		Side = PlayerSide.Monsters;
 		IFieldFactory fact = new FieldFactoryStub();
 		Field = fact.ClassicField;
@@ -54,12 +59,16 @@ public class FieldManager : MonoBehaviour
 		Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Impling,
-			Position = new Point(5,5)
+			PathId = 3,
+			Position = Field.StaticData.Start,
+			Health = 50
 		});
 		Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Skeleton,
-			Position = new Point(1,1)
+			PathId = 4,
+			Position = Field.StaticData.Start,
+			Health = 50
 		});
 		Field.AddGameObject(new Tower
 		{
@@ -67,6 +76,10 @@ public class FieldManager : MonoBehaviour
 			Position = new Point(4, 4)
 		});
 		RenderFieldState();
+
+		var clc = new StateCalculator(new StatsLibrary(), Field);
+		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
+		
 	}
 	
 	// Update is called once per frame
@@ -158,16 +171,16 @@ public class FieldManager : MonoBehaviour
 		_pool.PutToPool(obj);
 	}
 	
-	private IEnumerator ResolveActions(IEnumerable<IEnumerable<GameAction>> actionList)
+	private IEnumerator ResolveActions(IEnumerable<GameTick> actionList)
 	{
-		foreach (var actions in actionList)
+		foreach (var tick in actionList)
 		{
-			foreach (var action in actions)
+			foreach (var action in tick.Actions)
 			{
 				_viewResolver.Resolve(action);
 				_stateResolver.Resolve(action);
 			}
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(TickSecond);
 		}
 	}
 

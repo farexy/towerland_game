@@ -2,6 +2,6 @@
 {
     public enum PlayerSide
     {
-        Monsters, Towers
+        Undefined, Monsters, Towers
     }
 }

@@ -14,7 +14,7 @@ namespace Assets.Scripts.Models.Stats
         Health = 100,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
-        Speed = 4,
+        Speed = 2,
         Cost = 50,
         Defence = UnitStats.DefenceType.LightArmor
       },
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Models.Stats
         Health = 100,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
-        Speed = 2,
+        Speed = 6,
         Cost = 120,
         Defence = UnitStats.DefenceType.HeavyArmor
       },

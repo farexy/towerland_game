@@ -39,7 +39,8 @@ namespace Assets.Scripts.Models.Resolvers
                     _fieldManager.RemoveGameObject(action.UnitId);
                     break;
                 case ActionId.UnitAttacksCastle:
-                    
+                    //logic
+                    _fieldManager.RemoveGameObject(action.UnitId);
                     break;
             }
         }

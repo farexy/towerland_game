@@ -10,6 +10,7 @@ public class MonstersManager : MonoBehaviour
 	private const int Up = 30;
 	private const int Width = 70; 
 	private const int Height = 40;
+	private const float FixedUpdate = 0.02f;
 	
 	private IStatsLibrary _statsLibrary;
 	private FieldManager _fieldManager;
@@ -39,8 +40,11 @@ public class MonstersManager : MonoBehaviour
 	{
 		var  obj = _fieldManager.GetGameObjectById(gameId);
 		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
-		var relativeSpeed = (float) 1 / speed / FieldManager.TickSecond;
+		var relativeSpeed =  FixedUpdate / FieldManager.TickSecond / speed;
 		relativeSpeed *= effect == EffectId.UnitFreezed ? SpecialEffect.FreezedSlowCoeff : 1;
-		obj.GetComponent<MonsterController>().SetMovement(relativeSpeed, CoordinationHelper.GetViewPoint(pos));
+		bool end = _fieldManager.Field.StaticData.Finish == pos;
+		obj.GetComponent<MonsterController>().SetMovement(end ? relativeSpeed / 2 : relativeSpeed, CoordinationHelper.GetViewPoint(pos));
 	}
+
+
 }
