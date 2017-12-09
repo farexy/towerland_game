@@ -20,13 +20,18 @@ public class MonstersManager : MonoBehaviour
 	{
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = new StatsLibrary();
+		
 	}
 
 	private void OnGUI()
 	{
 		foreach (var unit in _fieldManager.Field.State.Units)
 		{
-			var unitObj = _fieldManager.GetGameObjectById(unit.GameId);
+			GameObjectScript unitObj;
+			if (!_fieldManager.TryGetGameObjectById(unit.GameId, out unitObj))
+			{
+				continue;
+			}
 			var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
 			var helthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
 			GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.green;
@@ -45,6 +50,5 @@ public class MonstersManager : MonoBehaviour
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
 		obj.GetComponent<MonsterController>().SetMovement(end ? relativeSpeed / 2 : relativeSpeed, CoordinationHelper.GetViewPoint(pos));
 	}
-
-
+	
 }

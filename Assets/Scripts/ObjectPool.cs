@@ -8,10 +8,17 @@ public class ObjectPool : MonoBehaviour
 	
 	private static readonly Dictionary<GameObjectType, string> TypeIdConfirmity = new Dictionary<GameObjectType, string>
 	{
+		{GameObjectType.Whizzbang_Usual, "UsualWhizzbang"},
+		{GameObjectType.Whizzbang_Frost, "FrostWhizzbang"},
+		{GameObjectType.Whizzbang_Magic, "MagicWhizzbang"},
+
 		{GameObjectType.Unit_Impling, "Impling"},
-		
 		{GameObjectType.Unit_Skeleton, "Skeleton"},
-		{GameObjectType.Tower_Usual, "UsualTower"}
+		
+		{GameObjectType.Tower_Usual, "UsualTower"},
+		{GameObjectType.Tower_Cannon, "CannonTower"},
+		{GameObjectType.Tower_Frost, "FrostTower"}
+
 	};
 
 	private Dictionary<string, GameObjectScript> _gameObjectsPool;
@@ -21,10 +28,11 @@ public class ObjectPool : MonoBehaviour
 		_gameObjectsPool = new Dictionary<string, GameObjectScript>();
 		foreach (var x in TypeIdConfirmity)
 		{
-			for (int i = 1; i <= 4; i++)
+			var cnt = GameObjectLogical.ResolveType(x.Key) == GameObjectType.Whizzbang ? 10 : 4;
+			for (int i = 1; i <= cnt; i++)
 			{
 				var name = string.Format("{0}_{1}", x.Value, i);
-				_gameObjectsPool.Add(name, GameObject.Find(name).GetComponent<GameObjectScript>());
+				_gameObjectsPool.Add(name, GameObject.Find(name).GetComponent<GameObjectScript>());			
 			}
 		}
 	}
@@ -43,7 +51,9 @@ public class ObjectPool : MonoBehaviour
 	public GameObjectScript GetFromPool(GameObjectType type)
 	{
 		var namePrefix = TypeIdConfirmity[type];
-		for (int i = 1; i <= 4; i++)
+		var cnt = GameObjectLogical.ResolveType(type) == GameObjectType.Whizzbang ? 2 : 4;
+
+		for (int i = 1; i <= cnt; i++)
 		{
 			var name = string.Format("{0}_{1}", namePrefix, i);
 			var obj = _gameObjectsPool[name];

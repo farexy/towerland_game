@@ -50,10 +50,11 @@ namespace Assets.Scripts.Models.Resolvers
             switch (action.ActionId)
             {
                 case ActionId.TowerAttacks:
-                    ManagersHelper.MonstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
+                    var unitPos = _fieldManager.GetGameObjectById(action.UnitId).GetComponent<Rigidbody2D>().position;
+                    ManagersHelper.TowerManager.ShowAttack(unitPos, action.TowerId);
                     break;
                 case ActionId.TowerAttacksPosition:
-                    
+                    ManagersHelper.TowerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
                     break;
             }      
         }

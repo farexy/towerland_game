@@ -24,7 +24,10 @@ public class FieldManager : MonoBehaviour
 	public GameObject Castle;
 
 	private Guid _battleId;
+	private Guid _playerId;
 	private ObjectPool _pool;
+	private int _tickCount;
+	private GameProcessNetworkWorker _gameProcessNetworkWorker;
 	
 	public GameObjectType Selected { get; set; }
 	
@@ -41,9 +44,10 @@ public class FieldManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
 		Side = LocalStorage.CurrentSide;
-		Side = PlayerSide.Monsters;
+		Side = PlayerSide.Towers;
 		IFieldFactory fact = new FieldFactoryStub();
 		Field = fact.ClassicField;
 		_pool = GetComponent<ObjectPool>();
@@ -59,14 +63,14 @@ public class FieldManager : MonoBehaviour
 		Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Impling,
-			PathId = 3,
+			PathId = 4,
 			Position = Field.StaticData.Start,
 			Health = 50
 		});
 		Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Skeleton,
-			PathId = 4,
+			PathId = 3,
 			Position = Field.StaticData.Start,
 			Health = 50
 		});
@@ -75,11 +79,17 @@ public class FieldManager : MonoBehaviour
 			Type = GameObjectType.Tower_Usual,
 			Position = new Point(4, 4)
 		});
-		RenderFieldState();
-
-		var clc = new StateCalculator(new StatsLibrary(), Field);
-		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
-		
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Cannon,
+			Position = new Point(6, 6)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Frost,
+			Position = new Point(8, 2)
+		});
+		StartCoroutine(StartShow());
 	}
 	
 	// Update is called once per frame
@@ -130,7 +140,7 @@ public class FieldManager : MonoBehaviour
 			}
 		}
 	}
-
+	
 	private void RenderFieldState()
 	{
 		foreach (var tower in Field.State.Towers)
@@ -143,7 +153,6 @@ public class FieldManager : MonoBehaviour
 			_gameObjects.Add(tower.GameId, obj);
 			obj.transform.position = CoordinationHelper.GetViewPoint(tower.Position);
 		}
-
 		foreach (var unit in Field.State.Units)
 		{
 			if (_gameObjects.ContainsKey(unit.GameId))
@@ -151,7 +160,7 @@ public class FieldManager : MonoBehaviour
 				var obj = _gameObjects[unit.GameId];
 				obj.transform.position = CoordinationHelper.GetViewPoint(unit.Position);
 			}
-			
+
 			var obj1 = _pool.GetFromPool(unit.Type);
 			obj1.GameId = unit.GameId;
 			_gameObjects.Add(unit.GameId, obj1);
@@ -164,11 +173,44 @@ public class FieldManager : MonoBehaviour
 		return _gameObjects[id];
 	}
 
+	public bool TryGetGameObjectById(int id, out GameObjectScript obj)
+	{
+		obj = null;
+		if (!_gameObjects.ContainsKey(id))
+		{
+			return false;
+		}
+		obj = _gameObjects[id];
+		return true;
+	}
+
 	public void RemoveGameObject(int id)
 	{
 		var obj = _gameObjects[id];
 		_gameObjects.Remove(id);
 		_pool.PutToPool(obj);
+	}
+
+	private IEnumerator StartShow()
+	{
+		yield return new WaitForSeconds(3);
+		RenderFieldState();
+
+		var clc = new StateCalculator(new StatsLibrary(), Field);
+		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
+	}
+
+	private IEnumerator NetworkWorker()
+	{
+		while (true)
+		{
+			var www = _gameProcessNetworkWorker.GetCheckSeacrhBattle(_playerId);
+			yield return www;
+			if (bool.Parse(www.text))
+			{
+				_gameProcessNetworkWorker.GetActionsByTicks(_battleId);
+			}
+		}
 	}
 	
 	private IEnumerator ResolveActions(IEnumerable<GameTick> actionList)
@@ -179,7 +221,9 @@ public class FieldManager : MonoBehaviour
 			{
 				_viewResolver.Resolve(action);
 				_stateResolver.Resolve(action);
+				Debug.Log(JsonUtility.ToJson(action));
 			}
+			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);
 		}
 	}

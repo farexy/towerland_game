@@ -26,7 +26,17 @@ namespace Helpers
         
         public static bool DifferentFloats(float f1, float f2)
         {
-            return Mathf.Abs(f1 - f2) > 0.3f;
+            return DifferentFloats(f1, f2, 0.3f);
+        }
+
+        public static bool EqualFloats(float f1, float f2, float comparator)
+        {
+            return !DifferentFloats(f1, f2, comparator);
+        }
+        
+        public static bool DifferentFloats(float f1, float f2, float comparator)
+        {
+            return Mathf.Abs(f1 - f2) > comparator;
         }
     }
 }

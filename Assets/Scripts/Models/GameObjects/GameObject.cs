@@ -26,8 +26,11 @@ namespace Assets.Scripts.Models.GameObjects
       if(type >= GameObjectType.Reserved && type < GameObjectType.Castle)
         return GameObjectType.Reserved;
 
-      if (type >= GameObjectType.Castle && type < GameObjectType.Tower)
+      if (type >= GameObjectType.Castle && type < GameObjectType.Whizzbang)
         return GameObjectType.Castle;
+
+      if (type >= GameObjectType.Whizzbang && type < GameObjectType.Tower)
+        return GameObjectType.Whizzbang;
 
       if (type >= GameObjectType.Tower && type < GameObjectType.Unit)
         return GameObjectType.Tower;

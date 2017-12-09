@@ -13,11 +13,11 @@ namespace Assets.Scripts.Network
             yield return www;
         }
 
-        public IEnumerator GetCheckSeacrhBattle(Guid playerId)
+        public WWW GetCheckSeacrhBattle(Guid playerId)
         {
             var url = string.Format(ConfigurationManager.CheckSearchBattleUrl, playerId);
             WWW www = new WWW(url);
-            yield return www;
+            return www;
         }
 
         public IEnumerator GetActionsByTicks(Guid battleId)

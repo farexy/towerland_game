@@ -10,6 +10,18 @@ public class GameObjectScript : MonoBehaviour
 
 	public void SetColor(Color color)
 	{
-		GetComponent<SpriteRenderer>().color = color;
+		var spriteRenderer = GetComponent<SpriteRenderer>();
+		if (spriteRenderer != null)
+		{
+			spriteRenderer.color = color;
+		}
+		else
+		{
+			var meshRenderer = GetComponent<MeshRenderer>();
+			if (meshRenderer != null)
+			{
+				meshRenderer.material.SetColor("_SpecColor", color);
+			}
+		}
 	}
 }
