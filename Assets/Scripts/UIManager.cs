@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.State;
 using Assets.Scripts.Models.Stats;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+	public GameObject DetailsPanel;
+	
 	private const int StartX = 200;
 	private const int Y = 5;
 	private const int Width = 75; 
@@ -25,8 +29,20 @@ public class UIManager : MonoBehaviour
 	private Texture2D _coinImg;
 	private Texture2D _castleImg;
 
+	private Image _iconImg;
+	private Text _speedText;
+	private Text _nameText;
+	private Text _costText;
+	private Text _priorityText;
+	private Text _offDefTypeText;
+	private Text _damageText;
+	private Text _healthRangeText;
+	private Text _specialText;
+
 	void Start()
 	{
+		InitDetailsPanel();
+		DetailsPanel.SetActive(false);
 		_coinImg = Resources.Load<Texture2D>("coin");
 		_castleImg = Resources.Load<Texture2D>("castle");
 		_fieldManager = GetComponent<FieldManager>();
@@ -66,11 +82,13 @@ public class UIManager : MonoBehaviour
 					{
 						_selected = GameObjectType.Undefined;
 						_fieldManager.Selected = GameObjectType.Undefined;
+						DetailsPanel.SetActive(false);
 					}
 					else
 					{
 						_selected = t;
 						_fieldManager.Selected = t;
+						DetailsPanel.SetActive(true);
 					}
 				}
 				GUI.backgroundColor = Color.gray;
@@ -110,6 +128,7 @@ public class UIManager : MonoBehaviour
 			}
 			GUI.Box(new Rect(Screen.width - Width - 10, Y + NormalHeight, Width + 10, NormalHeight), 
 				new GUIContent(string.Format("{0}:{1}", lastTime.Minutes, lastTime.Seconds), _castleImg));
+			SetDetails();
 
 		}
 		catch (NullReferenceException e)
@@ -118,6 +137,75 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
+	private void InitDetailsPanel()
+	{
+		_iconImg = GameObject.Find("icon_img").GetComponent<Image>();
+		_nameText = GameObject.Find("name_text").GetComponent<Text>();
+		_costText = GameObject.Find("cost_text").GetComponent<Text>();
+		_speedText = GameObject.Find("speed_text").GetComponent<Text>();
+		_priorityText = GameObject.Find("priority_text").GetComponent<Text>();
+		_damageText = GameObject.Find("damage_text").GetComponent<Text>();
+		_healthRangeText = GameObject.Find("healthRange_text").GetComponent<Text>();
+		_offDefTypeText = GameObject.Find("offDef_text").GetComponent<Text>();
+		_specialText = GameObject.Find("special_text").GetComponent<Text>();
+	}
+	
+	private void SetDetails()
+	{
+		if (_selected == GameObjectType.Undefined)
+		{
+			return;
+		}
+		var texture = GetGameObjectImage(_selected);
+		_iconImg.overrideSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
+		_nameText.text = GetName(_selected);
+		if (GameObjectLogical.ResolveType(_selected) == GameObjectType.Tower)
+		{
+			var stats = _statsLibrary.GetTowerStats(_selected);
+			_costText.text = "Cost: " + stats.Cost;
+			_speedText.text = "Attack speed: " + stats.AttackSpeed;
+			_priorityText.text = "Target priority: " + stats.TargetPriority;
+			_offDefTypeText.text = "Attack type: " + stats.Attack;
+			_damageText.text = "Damage: " + stats.Damage;
+			_healthRangeText.text = "Range: " + stats.Range;
+			_specialText.text = GetSpecialEffectText(stats.SpecialEffects);
+		}
+		else
+		{
+			var stats = _statsLibrary.GetUnitStats(_selected);
+			_costText.text = "Cost: " + stats.Cost;
+			_speedText.text = "Speed: " + stats.Speed;
+			_priorityText.text = "Movement priority: " + stats.MovementPriority;
+			_offDefTypeText.text = "Defence type: " + stats.Defence;
+			_damageText.text = "Damage: " + stats.Damage;
+			_healthRangeText.text = "Health: " + stats.Health;
+			_specialText.text = stats.IsAir ? "Air monster" : string.Empty;
+		}
+	}
+
+	private string GetSpecialEffectText(SpecialEffect[] specialEffects)
+	{
+		if (specialEffects.Any())
+		{
+			var effect = specialEffects.First();
+			switch (effect.Effect)
+			{
+					case EffectId.UnitFreezed:
+						return string.Format("Freezing monsters, duration: {0} ticks", effect.Duration);
+					case EffectId.Unit10xDamage_10PercentProbability:
+						return string.Format("10% possibility of 10x damage");
+			}
+		}
+		return string.Empty;
+	}
+
+	private string GetName(GameObjectType type)
+	{
+		return GameObjectLogical.ResolveType(type) == GameObjectType.Unit || GameObjectType.Tower_FortressWatchtower == type
+		? type.ToString().Split('_')[1]
+		: type.ToString().Replace('_', ' ');
+	}
+	
 	private Texture2D GetGameObjectImage(GameObjectType type)
 	{
 		return Resources.Load<Texture2D>(type.ToString());

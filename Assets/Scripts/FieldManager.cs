@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
@@ -17,6 +18,7 @@ using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
 public class FieldManager : MonoBehaviour
 {
 	public const float TickSecond = 0.5f;
+	private readonly Quaternion Quaternion = UnityEngine.Quaternion.Euler(90, 90, 270);
 	
 	public GameObject Ground;
 	public GameObject Road;
@@ -40,6 +42,8 @@ public class FieldManager : MonoBehaviour
 
 	private IActionResolver _stateResolver;
 	private IActionResolver _viewResolver;
+
+	private readonly GameObjectType[] FlyingObjects = new[] {GameObjectType.Unit_Dragon};
 	
 	// Use this for initialization
 	void Start ()
@@ -47,7 +51,7 @@ public class FieldManager : MonoBehaviour
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
 		Side = LocalStorage.CurrentSide;
-		Side = PlayerSide.Towers;
+		Side = PlayerSide.Monsters;
 		IFieldFactory fact = new FieldFactoryStub();
 		Field = fact.ClassicField;
 		_pool = GetComponent<ObjectPool>();
@@ -62,31 +66,31 @@ public class FieldManager : MonoBehaviour
 
 		Field.AddGameObject(new Unit
 		{
-			Type = GameObjectType.Unit_Impling,
+			Type = GameObjectType.Unit_Skeleton,
 			PathId = 4,
 			Position = Field.StaticData.Start,
-			Health = 50
+			Health = 100
 		});
 		Field.AddGameObject(new Unit
 		{
-			Type = GameObjectType.Unit_Skeleton,
+			Type = GameObjectType.Unit_Goblin,
 			PathId = 3,
 			Position = Field.StaticData.Start,
-			Health = 50
+			Health = 200
 		});
 		Field.AddGameObject(new Tower
 		{
-			Type = GameObjectType.Tower_Usual,
+			Type = GameObjectType.Tower_FortressWatchtower,
 			Position = new Point(4, 4)
 		});
+//		Field.AddGameObject(new Tower
+//		{
+//			Type = GameObjectType.Tower_Cannon,
+//			Position = new Point(6, 6)
+//		});
 		Field.AddGameObject(new Tower
 		{
-			Type = GameObjectType.Tower_Cannon,
-			Position = new Point(6, 6)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Frost,
+			Type = GameObjectType.Tower_Magic,
 			Position = new Point(8, 2)
 		});
 		StartCoroutine(StartShow());
@@ -113,22 +117,22 @@ public class FieldManager : MonoBehaviour
 					var point = new Point(i, j);
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Entrance)
 					{
-						tmp = Instantiate(Entrance, CoordinationHelper.GetViewPoint(point), Quaternion.identity) as GameObject;
+						tmp = Instantiate(Entrance, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Road)
 					{
-						tmp = Instantiate(Road, CoordinationHelper.GetViewPoint(point), Quaternion.identity) as GameObject;
+						tmp = Instantiate(Road, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Ground)
 					{
-						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion.identity) as GameObject;
+						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Castle)
 					{
-						tmp = Instantiate(Castle, CoordinationHelper.GetViewPoint(point), Quaternion.identity) as GameObject;
+						tmp = Instantiate(Castle, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
 						tmp.transform.parent = transform;
 					}
 				}
@@ -158,13 +162,18 @@ public class FieldManager : MonoBehaviour
 			if (_gameObjects.ContainsKey(unit.GameId))
 			{
 				var obj = _gameObjects[unit.GameId];
-				obj.transform.position = CoordinationHelper.GetViewPoint(unit.Position);
+
+				obj.transform.position = FlyingObjects.Contains(obj.Type)
+					? CoordinationHelper.GetViewPoint3(unit.Position)
+					: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);
 			}
 
 			var obj1 = _pool.GetFromPool(unit.Type);
 			obj1.GameId = unit.GameId;
 			_gameObjects.Add(unit.GameId, obj1);
-			obj1.transform.position = CoordinationHelper.GetViewPoint(unit.Position);	
+			obj1.transform.position = FlyingObjects.Contains(obj1.Type)
+				? CoordinationHelper.GetViewPoint3(unit.Position)
+				: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);	
 		}
 	}
 
@@ -210,6 +219,7 @@ public class FieldManager : MonoBehaviour
 			{
 				_gameProcessNetworkWorker.GetActionsByTicks(_battleId);
 			}
+			yield return new WaitForSeconds(1);
 		}
 	}
 	
@@ -221,7 +231,6 @@ public class FieldManager : MonoBehaviour
 			{
 				_viewResolver.Resolve(action);
 				_stateResolver.Resolve(action);
-				Debug.Log(JsonUtility.ToJson(action));
 			}
 			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);

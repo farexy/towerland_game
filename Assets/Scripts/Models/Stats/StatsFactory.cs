@@ -10,10 +10,10 @@ namespace Assets.Scripts.Models.Stats
       new UnitStats
       {
         Type = GameObjectType.Unit_Skeleton,
-        Damage = 5,
-        Health = 100,
+        Damage = 20,
+        Health = 200,
         IsAir = false,
-        MovementPriority = UnitStats.MovementPriorityType.Random,
+        MovementPriority = UnitStats.MovementPriorityType.Fastest,
         Speed = 2,
         Cost = 50,
         Defence = UnitStats.DefenceType.LightArmor
@@ -21,8 +21,8 @@ namespace Assets.Scripts.Models.Stats
       new UnitStats
       {
         Type = GameObjectType.Unit_Orc,
-        Damage = 10,
-        Health = 100,
+        Damage = 30,
+        Health = 500,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 6,
@@ -33,13 +33,46 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Impling,
         Damage = 15,
-        Health = 100,
+        Health = 250,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 4,
         Cost = 200,
         Defence = UnitStats.DefenceType.LightArmor
+      },  
+      new UnitStats
+      {
+        Type = GameObjectType.Unit_Goblin,
+        Damage = 15,
+        Health = 200,
+        IsAir = false,
+        MovementPriority = UnitStats.MovementPriorityType.Optimal,
+        Speed = 3,
+        Cost = 250,
+        Defence = UnitStats.DefenceType.LightArmor
       }, 
+      new UnitStats
+      {
+        Type = GameObjectType.Unit_Dragon,
+        Damage = 25,
+        Health = 400,
+        IsAir = true,
+        MovementPriority = UnitStats.MovementPriorityType.Optimal,
+        Speed = 3,
+        Cost = 500,
+        Defence = UnitStats.DefenceType.Undefended
+      },
+      new UnitStats
+      {
+        Type = GameObjectType.Unit_Golem,
+        Damage = 30,
+        Health = 700,
+        IsAir = false,
+        MovementPriority = UnitStats.MovementPriorityType.Random,
+        Speed = 5,
+        Cost = 750,
+        Defence = UnitStats.DefenceType.HeavyArmor
+      },
     };
 
     public TowerStats[] Towers =
@@ -47,6 +80,7 @@ namespace Assets.Scripts.Models.Stats
       new TowerStats
       {
         Type = GameObjectType.Tower_Usual,
+        TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Usual,
         AttackSpeed = 8,
         Damage = 10,
@@ -56,6 +90,7 @@ namespace Assets.Scripts.Models.Stats
       new TowerStats
       {
         Type = GameObjectType.Tower_Frost,
+        TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Magic,
         AttackSpeed = 3,
         Damage = 4,
@@ -66,6 +101,7 @@ namespace Assets.Scripts.Models.Stats
       new TowerStats
       {
         Type = GameObjectType.Tower_Cannon,
+        TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Burst,
         AttackSpeed = 15,
         Damage = 20,
@@ -75,12 +111,17 @@ namespace Assets.Scripts.Models.Stats
       new TowerStats
       {
         Type = GameObjectType.Tower_FortressWatchtower,
+        TargetPriority = TowerStats.AttackPriority.Optimal,
         Attack = TowerStats.AttackType.Usual,
-        
+        AttackSpeed = 12,
+        Damage = 30,
+        Range = 5,
+        Cost = 350,
       },
       new TowerStats
       {
         Type = GameObjectType.Tower_Magic,
+        TargetPriority = TowerStats.AttackPriority.Optimal,
         Attack = TowerStats.AttackType.Magic,
         AttackSpeed = 6,
         Damage = 20,

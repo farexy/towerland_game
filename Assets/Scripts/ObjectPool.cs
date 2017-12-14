@@ -14,11 +14,16 @@ public class ObjectPool : MonoBehaviour
 
 		{GameObjectType.Unit_Impling, "Impling"},
 		{GameObjectType.Unit_Skeleton, "Skeleton"},
+		{GameObjectType.Unit_Orc, "Orc"},
+		{GameObjectType.Unit_Goblin, "Goblin"},
+		{GameObjectType.Unit_Dragon, "Dragon"},
+		{GameObjectType.Unit_Golem, "Golem"},
 		
 		{GameObjectType.Tower_Usual, "UsualTower"},
 		{GameObjectType.Tower_Cannon, "CannonTower"},
-		{GameObjectType.Tower_Frost, "FrostTower"}
-
+		{GameObjectType.Tower_Frost, "FrostTower"},
+		{GameObjectType.Tower_FortressWatchtower, "Watchtower"},
+		{GameObjectType.Tower_Magic, "TowerMagic"}
 	};
 
 	private Dictionary<string, GameObjectScript> _gameObjectsPool;

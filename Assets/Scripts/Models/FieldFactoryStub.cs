@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.Interfaces;
@@ -15,7 +16,7 @@ namespace Assets.Scripts.Models
         private static readonly int[,] Cells2 =
         {
       {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-      {2,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1,1},
+      {3,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1,1},
       {1,1,0,1,1,1,1,0,0,0,0,0,0,0,1,0,1,1},
       {1,1,0,0,0,0,1,1,0,1,1,1,1,1,1,0,1,1},
       {1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,0,1,1},
@@ -31,7 +32,7 @@ namespace Assets.Scripts.Models
       {1,1,0,0,1,1,1,0,1,1,1,1,1,1,0,1,1,1},
       {1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1},
       {1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1},
-      {1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1}
+      {1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1}
     };
 
         private static readonly Point[] Path1 =
@@ -119,7 +120,10 @@ namespace Assets.Scripts.Models
                     },
                     StaticData =
                     {
-                        Path = new[] { new Path(Path1), new Path(Path2), new Path(Path3), new Path(Path4), new Path(Path5),  }
+                        Path = new[]
+                        {
+                            new Path(Path1.Reverse()), new Path(Path2.Reverse()), new Path(Path3.Reverse()), new Path(Path4.Reverse()), new Path(Path5.Reverse()),
+                        }
                     }
                 };
         

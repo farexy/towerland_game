@@ -10,6 +10,7 @@ namespace Assets.Scripts.Models.Stats
     public int Range { set; get; }
     public int AttackSpeed { set; get; }
     public AttackType Attack { set; get; }
+    public AttackPriority TargetPriority { set; get; }
     public SpecialEffect[] SpecialEffects { set; get; }
     public int Cost { set; get; }
 
@@ -18,6 +19,12 @@ namespace Assets.Scripts.Models.Stats
       Usual,
       Magic,
       Burst
+    }
+    
+    public enum AttackPriority
+    {
+      Random,
+      Optimal
     }
   }
 }

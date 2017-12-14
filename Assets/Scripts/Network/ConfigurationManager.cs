@@ -2,6 +2,7 @@
 {
     public static class ConfigurationManager
     {
+        public const bool Debug = true;
         public const string Server = "http://localhost:64283";
 
         public static string SearchBattleUrl = Server + "/battlesearch/search/{0}/";
