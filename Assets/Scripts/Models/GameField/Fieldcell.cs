@@ -1,8 +1,10 @@
-﻿namespace Assets.Scripts.Models.GameField
+﻿using Newtonsoft.Json;
+
+namespace Assets.Scripts.Models.GameField
 {
   public struct FieldCell
   {
-    public FieldObject Object;
-    public Point Position;
+    [JsonProperty("o")] public FieldObject Object;
+    [JsonProperty("p")] public Point Position;
   }
 }

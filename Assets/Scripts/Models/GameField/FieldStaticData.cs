@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.Models.GameObjects;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.GameField
 {
@@ -12,8 +13,8 @@ namespace Assets.Scripts.Models.GameField
             Cells = cells;
         }
     
-        public Path[] Path { set; get; }
-        public FieldCell[,] Cells { private set; get; }
+        [JsonProperty("p")] public Path[] Path { set; get; }
+        [JsonProperty("m")] public FieldCell[,] Cells { private set; get; }
     
         public Point Start { get; private set; }
         public Point Finish { get; private set; }

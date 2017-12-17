@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameObjects;
@@ -32,11 +33,16 @@ public class TowerManager: MonoBehaviour
 				? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
 				: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
 
-		var body = whizzbang.GetComponent<Rigidbody>();
-		var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody>().position;
-		body.position = new Vector3(pos.x, pos.y, -0.5f);;
-		StartCoroutine(WhizzbangMovement(body, to, 
-			attackType == TowerStats.AttackType.Burst ? BurstSpeed : WhizzbangSpeed, attackType == TowerStats.AttackType.Burst));
+		try
+		{
+			var body = whizzbang.GetComponent<Rigidbody>();
+			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody>().position;
+			body.position = new Vector3(pos.x, pos.y, -0.5f);
+			;
+			StartCoroutine(WhizzbangMovement(body, to,
+				attackType == TowerStats.AttackType.Burst ? BurstSpeed : WhizzbangSpeed,
+				attackType == TowerStats.AttackType.Burst));
+		}catch(NullReferenceException){}
 	}
 
 	private IEnumerator WhizzbangMovement(Rigidbody whizzbang, Vector3 to, float speed, bool explosion)

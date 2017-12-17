@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
@@ -11,8 +12,11 @@ using Assets.Scripts.Models.Resolvers;
 using Assets.Scripts.Models.State;
 using Assets.Scripts.Models.Stats;
 using Assets.Scripts.Network;
+using Assets.Scripts.Network.Models;
 using Helpers;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
 
 public class FieldManager : MonoBehaviour
@@ -25,6 +29,8 @@ public class FieldManager : MonoBehaviour
 	public GameObject Entrance;
 	public GameObject Castle;
 
+	private Coroutine _resolver;
+	private int _revision;
 	private Guid _battleId;
 	private Guid _playerId;
 	private ObjectPool _pool;
@@ -33,6 +39,7 @@ public class FieldManager : MonoBehaviour
 	
 	public GameObjectType Selected { get; set; }
 	
+	public PlayerSide Winner { get; set; }
 	public PlayerSide Side { get; set; }
 	public Field Field { get; private set; }
 	public int Width { get; private set; }
@@ -50,7 +57,7 @@ public class FieldManager : MonoBehaviour
 	{
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
-		Side = LocalStorage.CurrentSide;
+		//Side = LocalStorage.CurrentSide;
 		Side = PlayerSide.Monsters;
 		IFieldFactory fact = new FieldFactoryStub();
 		Field = fact.ClassicField;
@@ -64,6 +71,8 @@ public class FieldManager : MonoBehaviour
 		CoordinationHelper.Init(Width, Height);
 		InstantiateField();
 
+		StartCoroutine(NetworkWorker());
+		return;
 		Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Skeleton,
@@ -78,20 +87,68 @@ public class FieldManager : MonoBehaviour
 			Position = Field.StaticData.Start,
 			Health = 200
 		});
+		Field.AddGameObject(new Unit
+		{
+			Type = GameObjectType.Unit_Dragon,
+			PathId = 3,
+			Position = Field.StaticData.Start,
+			Health = 200
+		});		
+		Field.AddGameObject(new Unit
+		{
+			Type = GameObjectType.Unit_Orc,
+			PathId = 3,
+			Position = Field.StaticData.Start,
+			Health = 200
+		});
+		Field.AddGameObject(new Unit
+		{
+			Type = GameObjectType.Unit_Golem,
+			PathId = 3,
+			Position = Field.StaticData.Start,
+			Health = 200
+		});
+		Field.AddGameObject(new Unit
+		{
+			Type = GameObjectType.Unit_Impling,
+			PathId = 3,
+			Position = Field.StaticData.Start,
+			Health = 200
+		});
 		Field.AddGameObject(new Tower
 		{
 			Type = GameObjectType.Tower_FortressWatchtower,
+			Position = new Point(6, 6)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Cannon,
 			Position = new Point(4, 4)
 		});
-//		Field.AddGameObject(new Tower
-//		{
-//			Type = GameObjectType.Tower_Cannon,
-//			Position = new Point(6, 6)
-//		});
 		Field.AddGameObject(new Tower
 		{
 			Type = GameObjectType.Tower_Magic,
 			Position = new Point(8, 2)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Usual,
+			Position = new Point(7, 1)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Frost,
+			Position = new Point(7, 4)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_FortressWatchtower,
+			Position = new Point(2, 3)
+		});
+		Field.AddGameObject(new Tower
+		{
+			Type = GameObjectType.Tower_Magic,
+			Position = new Point(8, 8)
 		});
 		StartCoroutine(StartShow());
 	}
@@ -128,6 +185,7 @@ public class FieldManager : MonoBehaviour
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Ground)
 					{
 						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
+						tmp.GetComponent<CellController>().Point = new Point(i, j);
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Castle)
@@ -166,6 +224,7 @@ public class FieldManager : MonoBehaviour
 				obj.transform.position = FlyingObjects.Contains(obj.Type)
 					? CoordinationHelper.GetViewPoint3(unit.Position)
 					: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);
+				continue;
 			}
 
 			var obj1 = _pool.GetFromPool(unit.Type);
@@ -200,6 +259,17 @@ public class FieldManager : MonoBehaviour
 		_pool.PutToPool(obj);
 	}
 
+	public void SwitchSide()
+	{
+		Side = Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters;
+		_playerId = _playerId == LocalStorage.PlayerId ? LocalStorage.HelpPlayerId : LocalStorage.PlayerId;
+	}
+	
+	public void Command(Point? position = null)
+	{
+		StartCoroutine(PostCommand(Selected, position));
+	}
+	
 	private IEnumerator StartShow()
 	{
 		yield return new WaitForSeconds(3);
@@ -209,32 +279,82 @@ public class FieldManager : MonoBehaviour
 		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
 	}
 
+	
+	private IEnumerator PostCommand(GameObjectType type, Point? position)
+	{
+		var command = new StateChangeCommandRequestModel
+		{
+			BattleId = _battleId,
+			CurrentTick	= _tickCount,
+			TowerCreationOptions = GameObjectLogical.ResolveType(type) == GameObjectType.Tower
+				? new []{new TowerCreationOption{Type = type, Position = position.Value}}
+				: null,
+			UnitCreationOptions = GameObjectLogical.ResolveType(type) == GameObjectType.Unit
+				? new []{new UnitCreationOption{Type = type}}
+				: null,
+		};
+		var www = _gameProcessNetworkWorker.PostCommand(command);
+		yield return www;
+	}
+
 	private IEnumerator NetworkWorker()
 	{
 		while (true)
 		{
-			var www = _gameProcessNetworkWorker.GetCheckSeacrhBattle(_playerId);
+			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
 			yield return www;
 			if (bool.Parse(www.text))
 			{
-				_gameProcessNetworkWorker.GetActionsByTicks(_battleId);
+				var www2 = _gameProcessNetworkWorker.GetActionsByTicks(_battleId);
+				yield return www2;
+				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www2.text);
+				_revision = ticks.Revision;
+				Field.SetState(ticks.State);
+				Field.AddMany(Field.State.Towers, Field.State.Units);
+				if (_resolver != null)
+				{
+					StopCoroutine(_resolver);
+				}
+				RenderFieldState();
+				_resolver = StartCoroutine(ResolveActions(ticks.ActionsByTicks));
 			}
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(0.4f); 	
 		}
 	}
 	
 	private IEnumerator ResolveActions(IEnumerable<GameTick> actionList)
 	{
+		_tickCount = 0;
 		foreach (var tick in actionList)
 		{
 			foreach (var action in tick.Actions)
 			{
 				_viewResolver.Resolve(action);
+				yield return null;
 				_stateResolver.Resolve(action);
 			}
 			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);
 		}
+	}
+
+	public void LeaveBattle()
+	{
+		StartCoroutine(PostEnd(Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters));
+	}
+
+	private IEnumerator PostEnd(PlayerSide winner)
+	{
+		WWW www = new WWW(string.Format(ConfigurationManager.TryEndUrl, _battleId, _playerId));
+		yield return www;
+		StartCoroutine(Leave(Side));
+	}
+	
+	private IEnumerator Leave(PlayerSide winner)
+	{
+		Winner = winner;
+		yield return new WaitForSeconds(1);
+		SceneManager.LoadScene("StartPages");
 	}
 
 }

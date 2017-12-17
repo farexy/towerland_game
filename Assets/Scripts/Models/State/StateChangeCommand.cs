@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.State
 {
   public class StateChangeCommand
   {
-    public CommandId Id { set; get; }
-    public Guid BattleId { set; get; }
-    public IEnumerable<UnitCreationOption> UnitCreationOptions { set; get; }
-    public IEnumerable<TowerCreationOption> TowerCreationOptions { set; get; }
+    [JsonProperty("i")] public CommandId Id { set; get; }
+    [JsonProperty("b")] public Guid BattleId { set; get; }
+    [JsonProperty("u")] public IEnumerable<UnitCreationOption> UnitCreationOptions { set; get; }
+    [JsonProperty("t")] public IEnumerable<TowerCreationOption> TowerCreationOptions { set; get; }
   }
 }

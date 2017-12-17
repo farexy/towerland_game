@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Assets.Scripts.Models.GameObjects;
 
 namespace Assets.Scripts.Models.GameField
@@ -12,10 +13,11 @@ namespace Assets.Scripts.Models.GameField
             Units = new List<Unit>();
         }
 
-        public FieldState(IEnumerable<Tower> towers, IEnumerable<Unit> units)
+        public FieldState(IEnumerable<Tower> towers, IEnumerable<Unit> units, Castle castle)
         {
-            Towers = towers.ToList();
-            Units = units.ToList();
+            Castle = (Castle)castle.Clone();
+            Towers = towers.Select(t => (Tower)t.Clone()).ToList();
+            Units = units.Select(u => (Unit)u.Clone()).ToList();
         }
     
         public Dictionary<int, GameObjectLogical> Objects { set; get; }

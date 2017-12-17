@@ -1,9 +1,11 @@
-﻿namespace Assets.Scripts.Models.GameField
+﻿using Newtonsoft.Json;
+
+namespace Assets.Scripts.Models.GameField
 {
   public struct Point
   {
-    public int X;
-    public int Y;
+    [JsonProperty("x")]public int X;
+    [JsonProperty("y")]public int Y;
 
     public Point(int x, int y)
     {

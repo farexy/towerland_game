@@ -6,7 +6,7 @@ using Assets.Scripts.Models.Interfaces;
 
 namespace Assets.Scripts.Models
 {
-    public class FieldFactoryStub : IFieldFactory
+     public class FieldFactoryStub : IFieldFactory
     {
         private const int FieldRoadCoeff = 30;
 
@@ -115,8 +115,8 @@ namespace Assets.Scripts.Models
                             Health = 100,
                             Position = new Point(7, 9)
                         },
-                        MonsterMoney = 100,
-                        TowerMoney = 100,
+                        MonsterMoney = 120,
+                        TowerMoney = 120,
                     },
                     StaticData =
                     {

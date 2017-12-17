@@ -10,5 +10,7 @@
 
         public static string GameProcessCommandUrl = Server + "/game/command";
         public static string ActionsByTicksUrl = Server + "/game/{0}/ticks/";
+        public static string GameCheckStateChanged = Server + "/game/{0}/check/{1}";
+        public static string TryEndUrl = Server + "/game/{0}/tryend/{1}";
     }
 }

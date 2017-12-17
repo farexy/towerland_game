@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.Effects;
+﻿using System.Threading;
+using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
@@ -40,7 +41,11 @@ namespace Assets.Scripts.Models.Resolvers
                     break;
           
                 case ActionId.UnitDies:
-                    _field.RemoveGameObject(action.UnitId);
+                    ThreadPool.QueueUserWorkItem(o =>
+                    {
+                        Thread.Sleep(500);
+                        _field.RemoveGameObject(action.UnitId);
+                    });
                     break;
           
                 case ActionId.UnitEffectCanseled:

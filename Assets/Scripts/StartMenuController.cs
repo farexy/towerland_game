@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.Hosting;
+﻿using System;
+using System.Collections;
 using Assets.Scripts.Network;
+using Assets.Scripts.Network.Models;
 using Helpers;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms;
 
 public class StartMenuController : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class StartMenuController : MonoBehaviour
 	void Start ()
 	{
 		_searchForBattle = false;
+		LocalStorage.PlayerId = new Guid("71dc126b-f804-4cd5-93ec-dfa5087ba2da");
+		LocalStorage.HelpPlayerId = new Guid("c4920571-89a1-43cc-9888-b267b415bf40");
 	}
 	
 	// Update is called once per frame
@@ -53,15 +54,23 @@ public class StartMenuController : MonoBehaviour
 		yield return www;
 		if (ConfigurationManager.Debug)
 		{
-			var www1 = new WWW(string.Format(ConfigurationManager.SearchBattleUrl, LocalStorage.PlayerId));
+			var www1 = new WWW(string.Format(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpPlayerId));
 			yield return www1;
 		}
-		var resp = "";
-		while (resp != "true")
+		var resp = new BattleSearchCheckResponseModel();
+		while (!resp.Found)
 		{
 			var www2 = new WWW(string.Format(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.PlayerId));
-			resp = www2.text;
+			yield return www2;
+			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.text);
 		}
+		if (ConfigurationManager.Debug)
+		{
+			var www3 = new WWW(string.Format(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpPlayerId));
+			yield return www3;
+		}
+		LocalStorage.CurrentBattleId = resp.BattleId;
+		LocalStorage.CurrentSide = resp.Side;
 		SceneManager.LoadScene("battle");
 	}
 }

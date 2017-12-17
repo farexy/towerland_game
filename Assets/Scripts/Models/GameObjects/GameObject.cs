@@ -1,15 +1,17 @@
-﻿using Assets.Scripts.Models.Effects;
+﻿using System;
+using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameField;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.GameObjects
 {
-  public abstract class GameObjectLogical
+  public class GameObjectLogical : ICloneable
   {
-    public int GameId { set; get; }
-    public Point Position { get; set; }
-    public int WaitTicks { set; get; }
-    public SpecialEffect Effect { set; get; }
-    public GameObjectType Type { set; get; }
+    [JsonProperty("i")] public int GameId { set; get; }
+    [JsonProperty("p")] public Point Position { get; set; }
+    [JsonProperty("w")] public int WaitTicks { set; get; }
+    [JsonProperty("e")] public SpecialEffect Effect { set; get; }
+    [JsonProperty("t")] public GameObjectType Type { set; get; }
 
     protected GameObjectLogical()
     {
@@ -39,6 +41,18 @@ namespace Assets.Scripts.Models.GameObjects
         return GameObjectType.Unit;
 
       return GameObjectType.Undefined;
+    }
+
+    public virtual object Clone()
+    {
+      return new Tower
+      {
+        GameId = GameId,
+        Position = Position,
+        Type = Type,
+        WaitTicks = WaitTicks,
+        Effect = new SpecialEffect{Effect = Effect.Effect, Duration = Effect.Duration}
+      };
     }
   }
 }

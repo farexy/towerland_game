@@ -61,11 +61,16 @@ namespace Assets.Scripts.Models.GameField
       return id;
     }
 
-    public IEnumerable<int> AddMany(IEnumerable<GameObjectLogical> objects)
+    public void AddMany(List<Tower> objects, List<Unit> objects1)
     {
+      _objects.Clear();
       foreach (var o in objects)
       {
-        yield return AddGameObject(o);
+        _objects.Add(o.GameId, o);
+      }
+      foreach (var o1 in objects1)
+      {
+        _objects.Add(o1.GameId, o1);
       }
     }
 
@@ -83,11 +88,11 @@ namespace Assets.Scripts.Models.GameField
       }
       if (type == GameObjectType.Unit)
       {
-        State.Units.Remove((Unit)gameObj);
+        State.Units.Remove(State.Units.First(u => u.GameId == gameId));
       }
       if (type == GameObjectType.Tower)
       {
-        State.Towers.Remove((Tower)gameObj);
+        State.Towers.Remove(State.Towers.First(t => t.GameId == gameId));
       }
 
       _objects.Remove(gameId);
@@ -114,10 +119,10 @@ namespace Assets.Scripts.Models.GameField
     public void SetState(FieldState state)
     {
       this._objects = state.Objects.ToDictionary(item => item.Key, item => item.Value);
-      this._state = new FieldState(State.Towers, State.Units)
+      this._state = new FieldState(state.Towers, state.Units, state.Castle)
       {
-        MonsterMoney = State.MonsterMoney,
-        TowerMoney = State.TowerMoney
+        MonsterMoney = state.MonsterMoney,
+        TowerMoney = state.TowerMoney,
       };
     }
     
@@ -130,7 +135,7 @@ namespace Assets.Scripts.Models.GameField
           Path = StaticData.Path
         },
         _objects = _objects.ToDictionary(item => item.Key, item => item.Value),
-        _state = new FieldState(State.Towers, State.Units)
+        _state = new FieldState(State.Towers, State.Units, State.Castle)
         {
           Castle = new Castle {Health = State.Castle.Health, Position = State.Castle.Position},
           MonsterMoney = State.MonsterMoney,

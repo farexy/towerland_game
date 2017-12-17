@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using Assets.Scripts.Network.Models;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Assets.Scripts.Network
@@ -20,11 +24,30 @@ namespace Assets.Scripts.Network
             return www;
         }
 
-        public IEnumerator GetActionsByTicks(Guid battleId)
+        public WWW GetActionsByTicks(Guid battleId)
         {
             var url = string.Format(ConfigurationManager.ActionsByTicksUrl, battleId);
             WWW www = new WWW(url);
-            yield return www;
+            return www;
+        }
+
+        public WWW GetCheckBattleStateChange(Guid battleId, int version)
+        {
+            var url = string.Format(ConfigurationManager.GameCheckStateChanged, battleId, version);
+            WWW www = new WWW(url);
+            return www;
+        }
+
+        public WWW PostCommand(StateChangeCommandRequestModel requestModel)
+        {
+            var postData = JsonConvert.SerializeObject(requestModel);
+            Dictionary<string,string> headers = new Dictionary<string, string>();
+            headers.Add("Content-Type", "application/json");
+ 
+            byte[] pData = Encoding.ASCII.GetBytes(postData.ToCharArray());
+		
+            WWW www = new WWW(ConfigurationManager.GameProcessCommandUrl, pData, headers);
+            return www;   
         }
     }
 }

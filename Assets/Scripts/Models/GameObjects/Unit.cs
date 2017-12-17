@@ -1,4 +1,7 @@
 ﻿
+using Assets.Scripts.Models.Effects;
+using Newtonsoft.Json;
+
 namespace Assets.Scripts.Models.GameObjects
 {
   public class Unit : GameObjectLogical
@@ -8,7 +11,21 @@ namespace Assets.Scripts.Models.GameObjects
       Type = GameObjectType.Unit;
     }
 
-    public int Health { set; get; }
-    public int? PathId { set; get; }
+    [JsonProperty("h")] public int Health { set; get; }
+    [JsonProperty("z")] public int? PathId { set; get; }
+
+    public override object Clone()
+    {
+      return new Unit
+      {
+        GameId = GameId,
+        Position = Position,
+        Type = Type,
+        WaitTicks = WaitTicks,
+        Effect = new SpecialEffect{Effect = Effect.Effect, Duration = Effect.Duration},
+        Health = Health,
+        PathId = PathId
+      };
+    }
   }
 }

@@ -25,7 +25,6 @@ public class UIManager : MonoBehaviour
 	private StatsLibrary _statsLibrary;
 
 	private PlayerSide _side;
-	private GameObjectType _selected;
 	private Texture2D _coinImg;
 	private Texture2D _castleImg;
 
@@ -58,6 +57,9 @@ public class UIManager : MonoBehaviour
 	
 	private void OnGUI()
 	{
+		var selected = _fieldManager.Selected;
+		_side = _fieldManager.Side; // todo remove
+		DetailsPanel.SetActive(selected != GameObjectType.Undefined);
 		//creates a GUI rect in left corner, where we may see the current number of collected coins
 		var playerSideTypes = _side == PlayerSide.Monsters ? _monsterTypes : _towerTypes;
 		try
@@ -74,21 +76,19 @@ public class UIManager : MonoBehaviour
 				bool notEnoughMoney = PlayerMoney() < cost;
 				GUI.backgroundColor = notEnoughMoney 
 					? Color.black
-					:_selected == t ? Color.red : Color.clear;
+					:selected == t ? Color.red : Color.clear;
 				
 				if (GUI.Button(new Rect(StartX + x, Y, Width, Height), "") && !notEnoughMoney)
 				{
-					if (_selected == t)
+					if (selected == t)
 					{
-						_selected = GameObjectType.Undefined;
+						selected = GameObjectType.Undefined;
 						_fieldManager.Selected = GameObjectType.Undefined;
-						DetailsPanel.SetActive(false);
 					}
 					else
 					{
-						_selected = t;
 						_fieldManager.Selected = t;
-						DetailsPanel.SetActive(true);
+						_fieldManager.Selected = t;
 					}
 				}
 				GUI.backgroundColor = Color.gray;
@@ -99,11 +99,11 @@ public class UIManager : MonoBehaviour
 			GUI.Box(new Rect(StartX + x, Y, Width, NormalHeight), new GUIContent(PlayerMoney().ToString(), _coinImg));
 			
 			GUI.backgroundColor = Color.blue;
-			if(_side == PlayerSide.Monsters && _selected != GameObjectType.Undefined 
+			if(_side == PlayerSide.Monsters && _fieldManager.Selected != GameObjectType.Undefined 
 			   && GUI.Button(new Rect(StartX + x, Y + NormalHeight, Width, NormalHeight), "Buy!"))
 			{
-				
-				_selected = GameObjectType.Undefined;
+				_fieldManager.Command();
+				_fieldManager.Selected = GameObjectType.Undefined;
 			}
 			GUI.backgroundColor = Color.gray;
 			
@@ -152,40 +152,43 @@ public class UIManager : MonoBehaviour
 	
 	private void SetDetails()
 	{
-		if (_selected == GameObjectType.Undefined)
+		var selected = _fieldManager.Selected;
+		if (selected == GameObjectType.Undefined)
 		{
 			return;
 		}
-		var texture = GetGameObjectImage(_selected);
+		var texture = GetGameObjectImage(selected);
 		_iconImg.overrideSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
-		_nameText.text = GetName(_selected);
-		if (GameObjectLogical.ResolveType(_selected) == GameObjectType.Tower)
+		_nameText.text = GetName(selected);
+		if (GameObjectLogical.ResolveType(selected) == GameObjectType.Tower)
 		{
-			var stats = _statsLibrary.GetTowerStats(_selected);
+			var stats = _statsLibrary.GetTowerStats(selected);
 			_costText.text = "Cost: " + stats.Cost;
 			_speedText.text = "Attack speed: " + stats.AttackSpeed;
 			_priorityText.text = "Target priority: " + stats.TargetPriority;
 			_offDefTypeText.text = "Attack type: " + stats.Attack;
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Range: " + stats.Range;
+			_specialText.fontSize = 12;
 			_specialText.text = GetSpecialEffectText(stats.SpecialEffects);
 		}
 		else
 		{
-			var stats = _statsLibrary.GetUnitStats(_selected);
+			var stats = _statsLibrary.GetUnitStats(selected);
 			_costText.text = "Cost: " + stats.Cost;
 			_speedText.text = "Speed: " + stats.Speed;
 			_priorityText.text = "Movement priority: " + stats.MovementPriority;
 			_offDefTypeText.text = "Defence type: " + stats.Defence;
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Health: " + stats.Health;
+			_specialText.fontSize = 14;
 			_specialText.text = stats.IsAir ? "Air monster" : string.Empty;
 		}
 	}
 
 	private string GetSpecialEffectText(SpecialEffect[] specialEffects)
 	{
-		if (specialEffects.Any())
+		if (specialEffects != null && specialEffects.Any())
 		{
 			var effect = specialEffects.First();
 			switch (effect.Effect)

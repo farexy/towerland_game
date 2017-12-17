@@ -402,7 +402,7 @@ namespace Assets.Scripts.Network
 
     public static Unit[] FindUnitsAt(this Field field, Point position)
     {
-      return field.FindGameObjects(obj => obj.Position == position).OfType<Unit>().ToArray();
+      return field.State.Units.Where(u => u.Position == position).ToArray();
     }
 
     public static int[] FindTowersThatCanAttack(this Field field, Point position, IStatsLibrary stats)
