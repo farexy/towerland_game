@@ -5,7 +5,7 @@ namespace Assets.Scripts.Models.Stats
 {
     public class StatsFactory
   {
-       public UnitStats[] Units =
+     public UnitStats[] Units =
     {
       new UnitStats
       {
@@ -22,7 +22,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Orc,
         Damage = 10,
-        Health = 300,
+        Health = 330,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 6,
@@ -33,7 +33,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Impling,
         Damage = 15,
-        Health = 250,
+        Health = 280,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 4,
@@ -44,7 +44,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Goblin,
         Damage = 15,
-        Health = 200,
+        Health = 350,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Optimal,
         Speed = 3,
@@ -55,7 +55,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Dragon,
         Damage = 25,
-        Health = 300,
+        Health = 600,
         IsAir = true,
         MovementPriority = UnitStats.MovementPriorityType.Optimal,
         Speed = 3,
@@ -66,7 +66,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Type = GameObjectType.Unit_Golem,
         Damage = 30,
-        Health = 500,
+        Health = 700,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 5,
@@ -82,9 +82,9 @@ namespace Assets.Scripts.Models.Stats
         Type = GameObjectType.Tower_Usual,
         TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Usual,
-        AttackSpeed = 8,
-        Damage = 50,
-        Range = 2,
+        AttackSpeed = 6,
+        Damage = 60,
+        Range = 3,
         Cost = 50
       },
       new TowerStats
@@ -93,8 +93,8 @@ namespace Assets.Scripts.Models.Stats
         TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Magic,
         AttackSpeed = 3,
-        Damage = 30,
-        Range = 3,
+        Damage = 35,
+        Range = 4,
         Cost = 120,
         SpecialEffects = new []{new SpecialEffect{Effect = EffectId.UnitFreezed, Duration = 16}}
       },
@@ -103,7 +103,7 @@ namespace Assets.Scripts.Models.Stats
         Type = GameObjectType.Tower_Cannon,
         TargetPriority = TowerStats.AttackPriority.Random,
         Attack = TowerStats.AttackType.Burst,
-        AttackSpeed = 15,
+        AttackSpeed = 12,
         Damage = 70,
         Range = 4,
         Cost = 200
@@ -113,7 +113,7 @@ namespace Assets.Scripts.Models.Stats
         Type = GameObjectType.Tower_FortressWatchtower,
         TargetPriority = TowerStats.AttackPriority.Optimal,
         Attack = TowerStats.AttackType.Usual,
-        AttackSpeed = 12,
+        AttackSpeed = 8,
         Damage = 100,
         Range = 5,
         Cost = 350,
@@ -123,7 +123,7 @@ namespace Assets.Scripts.Models.Stats
         Type = GameObjectType.Tower_Magic,
         TargetPriority = TowerStats.AttackPriority.Optimal,
         Attack = TowerStats.AttackType.Magic,
-        AttackSpeed = 6,
+        AttackSpeed = 5,
         Damage = 70,
         Range = 6,
         Cost = 400,

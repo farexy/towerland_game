@@ -34,7 +34,7 @@ public class MonstersManager : MonoBehaviour
 			}
 			var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
 			var helthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
-			GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.green;
+			GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
 			GUI.backgroundColor = Color.clear;
 			var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
 			GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), helthIndicator);

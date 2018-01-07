@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Assets.Scripts.Models;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
@@ -57,8 +58,12 @@ public class FieldManager : MonoBehaviour
 	{
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
-		//Side = LocalStorage.CurrentSide;
-		Side = PlayerSide.Monsters;
+		_playerId = LocalStorage.PlayerId;
+		if (ConfigurationManager.Debug)
+		{
+			Side = PlayerSide.Monsters;
+		}
+		Side = LocalStorage.CurrentSide;
 		IFieldFactory fact = new FieldFactoryStub();
 		Field = fact.ClassicField;
 		_pool = GetComponent<ObjectPool>();
@@ -73,7 +78,7 @@ public class FieldManager : MonoBehaviour
 
 		StartCoroutine(NetworkWorker());
 		return;
-		Field.AddGameObject(new Unit
+			Field.AddGameObject(new Unit
 		{
 			Type = GameObjectType.Unit_Skeleton,
 			PathId = 4,
@@ -280,7 +285,7 @@ public class FieldManager : MonoBehaviour
 	}
 
 	
-	private IEnumerator PostCommand(GameObjectType type, Point? position)
+	private IEnumerator PostCommand(GameObjectType type, Point? position, bool cheat = false)
 	{
 		var command = new StateChangeCommandRequestModel
 		{
@@ -292,6 +297,7 @@ public class FieldManager : MonoBehaviour
 			UnitCreationOptions = GameObjectLogical.ResolveType(type) == GameObjectType.Unit
 				? new []{new UnitCreationOption{Type = type}}
 				: null,
+			Money = cheat ? 100 : 0
 		};
 		var www = _gameProcessNetworkWorker.PostCommand(command);
 		yield return www;
@@ -343,6 +349,11 @@ public class FieldManager : MonoBehaviour
 		StartCoroutine(PostEnd(Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters));
 	}
 
+	public void Cheat()
+	{
+		StartCoroutine(PostCommand(GameObjectType.Undefined, null, true));
+	}
+
 	private IEnumerator PostEnd(PlayerSide winner)
 	{
 		WWW www = new WWW(string.Format(ConfigurationManager.TryEndUrl, _battleId, _playerId));
@@ -357,4 +368,16 @@ public class FieldManager : MonoBehaviour
 		SceneManager.LoadScene("StartPages");
 	}
 
+
+	public void End(PlayerSide winner)
+	{
+		StartCoroutine(PostEnd(winner));
+	}
+
+	private IEnumerator Init()
+	{
+		var www = new WWW(string.Format(ConfigurationManager.InitFieldUrl, _battleId));
+		yield return www;
+		Field = JsonConvert.DeserializeObject<Field>(www.text);
+	}
 }

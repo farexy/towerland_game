@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
+using Assets.Scripts.Models.State;
 using Helpers;
 using UnityEngine;
 
@@ -61,6 +62,15 @@ namespace Assets.Scripts.Models.Resolvers
 
         protected override void ResolveOtherAction(GameAction action)
         {
+            switch (action.ActionId)
+            {
+                case ActionId.MonsterPlayerWins:
+                    ManagersHelper.FieldManager.End(PlayerSide.Monsters);
+                    break;
+                case ActionId.TowerPlayerWins:
+                    ManagersHelper.FieldManager.End(PlayerSide.Towers);
+                    break;
+            }
         }
     }
 }

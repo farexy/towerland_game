@@ -6,9 +6,17 @@ using Helpers;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartMenuController : MonoBehaviour
 {
+	public GameObject MainMenu;
+	public GameObject RatingTable;
+
+	public Text LevelText;
+	public Text ExperienceText;
+	public GameObject Progress;
+	
 	private bool _searchForBattle;
 	private const int Width = 200;
 	private const int Height = 100;
@@ -17,8 +25,6 @@ public class StartMenuController : MonoBehaviour
 	void Start ()
 	{
 		_searchForBattle = false;
-		LocalStorage.PlayerId = new Guid("71dc126b-f804-4cd5-93ec-dfa5087ba2da");
-		LocalStorage.HelpPlayerId = new Guid("c4920571-89a1-43cc-9888-b267b415bf40");
 	}
 	
 	// Update is called once per frame
@@ -44,7 +50,8 @@ public class StartMenuController : MonoBehaviour
 	
 	public void OnRatingButtonClick()
 	{
-		
+		RatingTable.SetActive(true);
+		MainMenu.SetActive(false);
 	}
 
 	private IEnumerator FindBattle()
@@ -72,5 +79,33 @@ public class StartMenuController : MonoBehaviour
 		LocalStorage.CurrentBattleId = resp.BattleId;
 		LocalStorage.CurrentSide = resp.Side;
 		SceneManager.LoadScene("battle");
+	}
+
+	private void ShowExp(UserExperience exp)
+	{
+		LevelText.text = "Level: " + exp.Level;
+		ExperienceText.text = string.Format("{0}/{1}", exp.RelativeExperience, exp.TotalLevelExperience);
+		var newWidth = ((float) exp.RelativeExperience / exp.TotalLevelExperience) *
+		               Progress.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
+		Progress.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(newWidth, Progress.transform.GetComponent<RectTransform>().sizeDelta.y);
+		Progress.transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(newWidth / 2,0);
+	}
+
+	public void LoadExp()
+	{
+		StartCoroutine(GetExperience(LocalStorage.PlayerId));
+	}
+	
+	private IEnumerator GetExperience(Guid playerId)
+	{
+		WWW www = new WWW(string.Format(ConfigurationManager.UserExpUrl, playerId));
+		yield return www;
+		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.text));
+	}
+	
+	public void ToStartMenu()
+	{
+		MainMenu.SetActive(true);
+		RatingTable.SetActive(false);
 	}
 }

@@ -120,6 +120,7 @@ namespace Assets.Scripts.Models
                     },
                     StaticData =
                     {
+                        EndTimeUtc = DateTime.UtcNow.AddMinutes(6),
                         Path = new[]
                         {
                             new Path(Path1.Reverse()), new Path(Path2.Reverse()), new Path(Path3.Reverse()), new Path(Path4.Reverse()), new Path(Path5.Reverse()),

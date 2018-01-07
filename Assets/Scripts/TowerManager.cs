@@ -35,17 +35,17 @@ public class TowerManager: MonoBehaviour
 
 		try
 		{
-			var body = whizzbang.GetComponent<Rigidbody>();
-			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody>().position;
-			body.position = new Vector3(pos.x, pos.y, -0.5f);
-			;
+			var body = whizzbang.GetComponent<Rigidbody2D>();
+			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody2D>().position;
+			whizzbang.transform.position = new Vector3(pos.x, pos.y, -0.5f);
+			
 			StartCoroutine(WhizzbangMovement(body, to,
 				attackType == TowerStats.AttackType.Burst ? BurstSpeed : WhizzbangSpeed,
 				attackType == TowerStats.AttackType.Burst));
 		}catch(NullReferenceException){}
 	}
 
-	private IEnumerator WhizzbangMovement(Rigidbody whizzbang, Vector3 to, float speed, bool explosion)
+	private IEnumerator WhizzbangMovement(Rigidbody2D whizzbang, Vector3 to, float speed, bool explosion)
 	{
 		while (CoordinationHelper.DifferentFloats(whizzbang.position.x, to.x, 0.01f) 
 		       || CoordinationHelper.DifferentFloats(whizzbang.position.y, to.y, 0.01f))
@@ -56,9 +56,13 @@ public class TowerManager: MonoBehaviour
 		}
 		if (explosion)
 		{
-			whizzbang.gameObject.transform.localScale *= 5;
-			yield return new WaitForSeconds(0.3f);
-			whizzbang.gameObject.transform.localScale /= 5;
+			whizzbang.gameObject.transform.localScale *= 1.7f;
+			yield return new WaitForSeconds(0.1f);
+			whizzbang.gameObject.transform.localScale *= 1.7f;
+			yield return new WaitForSeconds(0.1f);
+			whizzbang.gameObject.transform.localScale *= 1.7f;
+			yield return new WaitForSeconds(0.1f);
+			whizzbang.gameObject.transform.localScale /= 4.913f;
 		}
 		_pool.PutToPool(whizzbang.GetComponent<GameObjectScript>());
 	}

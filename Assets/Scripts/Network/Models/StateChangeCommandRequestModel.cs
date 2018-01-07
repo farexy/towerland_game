@@ -10,6 +10,7 @@ namespace Assets.Scripts.Network.Models
         public Guid BattleId { set; get; }
         public IEnumerable<UnitCreationOption> UnitCreationOptions { set; get; }
         public IEnumerable<TowerCreationOption> TowerCreationOptions { set; get; }
+        public int Money { set; get; }
     
         public int CurrentTick { set; get; }
     }

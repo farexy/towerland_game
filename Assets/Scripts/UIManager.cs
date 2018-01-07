@@ -14,7 +14,11 @@ public class UIManager : MonoBehaviour
 	
 	private const int StartX = 200;
 	private const int Y = 5;
-	private const int Width = 75; 
+//	private const int Width = 125; 
+//	private const int Height = 120;
+//	private const int SmallHeight = 30;
+//	private const int NormalHeight = 80;
+	private const int Width = 75;
 	private const int Height = 70;
 	private const int SmallHeight = 20;
 	private const int NormalHeight = 40;
@@ -126,9 +130,20 @@ public class UIManager : MonoBehaviour
 			{
 				GUI.contentColor = Color.white;
 			}
+			if (lastTime < TimeSpan.Zero)
+			{
+				_fieldManager.LeaveBattle();
+			}
 			GUI.Box(new Rect(Screen.width - Width - 10, Y + NormalHeight, Width + 10, NormalHeight), 
 				new GUIContent(string.Format("{0}:{1}", lastTime.Minutes, lastTime.Seconds), _castleImg));
 			SetDetails();
+			if (_fieldManager.Winner != PlayerSide.Undefined)
+			{
+				GUI.skin.box.fontSize = 24;
+				GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width * 5, Height), 
+					_fieldManager.Winner == PlayerSide.Monsters ? "Monster player wins!" : "Tower player wins!");
+				GUI.skin.box.fontSize = 14;
+			}
 
 		}
 		catch (NullReferenceException e)
