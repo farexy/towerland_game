@@ -33,7 +33,7 @@ public class FieldManager : MonoBehaviour
 	private Coroutine _resolver;
 	private int _revision;
 	private Guid _battleId;
-	private Guid _playerId;
+	private string _session;
 	private ObjectPool _pool;
 	private int _tickCount;
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
@@ -58,7 +58,7 @@ public class FieldManager : MonoBehaviour
 	{
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
-		_playerId = LocalStorage.PlayerId;
+		_session = LocalStorage.Session;
 		if (ConfigurationManager.Debug)
 		{
 			Side = PlayerSide.Monsters;
@@ -267,7 +267,7 @@ public class FieldManager : MonoBehaviour
 	public void SwitchSide()
 	{
 		Side = Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters;
-		_playerId = _playerId == LocalStorage.PlayerId ? LocalStorage.HelpPlayerId : LocalStorage.PlayerId;
+		_session = _session == LocalStorage.Session ? LocalStorage.HelpSession : LocalStorage.Session;
 	}
 	
 	public void Command(Point? position = null)
@@ -309,11 +309,9 @@ public class FieldManager : MonoBehaviour
 		{
 			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
 			yield return www;
-			if (bool.Parse(www.text))
+			if (!string.IsNullOrEmpty(www.text))
 			{
-				var www2 = _gameProcessNetworkWorker.GetActionsByTicks(_battleId);
-				yield return www2;
-				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www2.text);
+				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.text);
 				_revision = ticks.Revision;
 				Field.SetState(ticks.State);
 				Field.AddMany(Field.State.Towers, Field.State.Units);
@@ -356,8 +354,8 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator PostEnd(PlayerSide winner)
 	{
-		WWW www = new WWW(string.Format(ConfigurationManager.TryEndUrl, _battleId, _playerId));
-		yield return www;
+		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+		yield return www.WWW;
 		StartCoroutine(Leave(Side));
 	}
 	
@@ -376,8 +374,8 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator Init()
 	{
-		var www = new WWW(string.Format(ConfigurationManager.InitFieldUrl, _battleId));
-		yield return www;
-		Field = JsonConvert.DeserializeObject<Field>(www.text);
+		var www = new WwwWrapper(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session);
+		yield return www.WWW;
+		Field = JsonConvert.DeserializeObject<Field>(www.WWW.text);
 	}
 }

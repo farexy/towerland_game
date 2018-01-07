@@ -52,16 +52,15 @@ public class TowerManager: MonoBehaviour
 		{
 			Vector3 p = Vector3.MoveTowards(whizzbang.position, to, speed);
 			whizzbang.MovePosition(p);
-			yield return null;
 		}
 		if (explosion)
 		{
 			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.1f);
+			yield return new WaitForSeconds(0.05f);
 			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.1f);
+			yield return new WaitForSeconds(0.05f);
 			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.1f);
+			yield return new WaitForSeconds(0.05f);
 			whizzbang.gameObject.transform.localScale /= 4.913f;
 		}
 		_pool.PutToPool(whizzbang.GetComponent<GameObjectScript>());

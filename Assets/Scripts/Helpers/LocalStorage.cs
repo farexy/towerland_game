@@ -5,8 +5,8 @@ namespace Helpers
 {
     public class LocalStorage
     {
-        public static Guid PlayerId { get; set; }
-        public static Guid HelpPlayerId { get; set; }
+        public static string Session { get; set; }
+        public static string HelpSession { get; set; }
         public static Guid CurrentBattleId { get; set; }
         public static PlayerSide CurrentSide { get; set; }
     }

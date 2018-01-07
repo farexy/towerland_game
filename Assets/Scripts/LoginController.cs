@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
@@ -23,10 +21,10 @@ public class LoginController : MonoBehaviour
 	{
 		if (ConfigurationManager.Debug)
 		{
-			LocalStorage.PlayerId = new Guid("71dc126b-f804-4cd5-93ec-dfa5087ba2da");
-			LocalStorage.HelpPlayerId = new Guid("c4920571-89a1-43cc-9888-b267b415bf40");
+			LocalStorage.Session = "PcK+EMtBhIF3jM3JkRS8nzst3jK1hQkPPmIGQVfNg1Nl9EyWS4Ubr6skhWrt6dmj";
+			LocalStorage.HelpSession = "0e+Yo3bu3WTGEUj+XhbzpfL7WEuSMeu9PGiu2bzNEiIeQbPnc7FZWSwsDa45Xb52";
 		}
-		if (LocalStorage.PlayerId != Guid.Empty)
+		if (LocalStorage.Session != null)
 		{
 			StartMenu.SetActive(true);
 			gameObject.SetActive(false);
@@ -57,17 +55,16 @@ public class LoginController : MonoBehaviour
 	{
 		var requestModel = new SignInRequestModel {Email = login, Password = password};
 		var postData = JsonConvert.SerializeObject(requestModel);
-		Dictionary<string,string> headers = new Dictionary<string, string>();
-		headers.Add("Content-Type", "application/json");
- 
+		Dictionary<string, string> headers = new Dictionary<string, string> {{"Content-Type", "application/json"}};
+
 		byte[] pData = Encoding.ASCII.GetBytes(postData.ToCharArray());
 		
 		WWW www = new WWW(ConfigurationManager.LoginUserUrl, pData, headers);
 		yield return www;
-		Guid id = new Guid(www.text.Replace("\"", String.Empty));
-		if (id != Guid.Empty)
+		string session = www.text.Replace("\"", string.Empty);
+		if (session != string.Empty)
 		{
-			LocalStorage.PlayerId = id;
+			LocalStorage.Session = session;
 			StartMenu.SetActive(true);
 			gameObject.SetActive(false);
 			Go.GetComponent<StartMenuController>().LoadExp();

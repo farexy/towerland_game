@@ -8,12 +8,12 @@
 
         public static string SearchBattleUrl
         {
-            get { return Server + "/battlesearch/search/{0}/"; }
+            get { return Server + "/battlesearch/search/"; }
         }
 
         public static string CheckSearchBattleUrl
         {
-            get { return Server + "/battlesearch/check/{0}/"; }
+            get { return Server + "/battlesearch/check/"; }
         }
 
         public static string InitFieldUrl
@@ -33,12 +33,12 @@
 
         public static string GameCheckStateChanged
         {
-            get { return Server + "/game/{0}/check/{1}"; }
+            get { return Server + "/game/{0}/checkstate/{1}"; }
         }
 
         public static string TryEndUrl
         {
-            get { return Server + "/game/{0}/tryend/{1}"; }
+            get { return Server + "/game/{0}/tryend"; }
         }
 
         public static string LoginUserUrl
@@ -53,7 +53,7 @@
 
         public static string UserExpUrl
         {
-            get { return Server + "/user/exp/{0}"; }
+            get { return Server + "/user/exp"; }
         }
     }
 }

@@ -57,24 +57,24 @@ public class StartMenuController : MonoBehaviour
 	private IEnumerator FindBattle()
 	{
 		_searchForBattle = true;
-		var www = new WWW(string.Format(ConfigurationManager.SearchBattleUrl, LocalStorage.PlayerId));
-		yield return www;
+		var www = new WwwWrapper(ConfigurationManager.SearchBattleUrl, LocalStorage.Session);
+		yield return www.WWW;
 		if (ConfigurationManager.Debug)
 		{
-			var www1 = new WWW(string.Format(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpPlayerId));
-			yield return www1;
+			var www1 = new WwwWrapper(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession);
+			yield return www1.WWW;
 		}
 		var resp = new BattleSearchCheckResponseModel();
 		while (!resp.Found)
 		{
-			var www2 = new WWW(string.Format(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.PlayerId));
-			yield return www2;
-			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.text);
+			var www2 = new WwwWrapper(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
+			yield return www2.WWW;
+			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.WWW.text);
 		}
 		if (ConfigurationManager.Debug)
 		{
-			var www3 = new WWW(string.Format(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpPlayerId));
-			yield return www3;
+			var www3 = new WwwWrapper(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession);
+			yield return www3.WWW;
 		}
 		LocalStorage.CurrentBattleId = resp.BattleId;
 		LocalStorage.CurrentSide = resp.Side;
@@ -93,14 +93,14 @@ public class StartMenuController : MonoBehaviour
 
 	public void LoadExp()
 	{
-		StartCoroutine(GetExperience(LocalStorage.PlayerId));
+		StartCoroutine(GetExperience(LocalStorage.Session));
 	}
 	
-	private IEnumerator GetExperience(Guid playerId)
+	private IEnumerator GetExperience(string session)
 	{
-		WWW www = new WWW(string.Format(ConfigurationManager.UserExpUrl, playerId));
-		yield return www;
-		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.text));
+		var www = new WwwWrapper(ConfigurationManager.UserExpUrl, session);
+		yield return www.WWW;
+		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.WWW.text));
 	}
 	
 	public void ToStartMenu()
