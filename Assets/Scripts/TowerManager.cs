@@ -38,10 +38,8 @@ public class TowerManager: MonoBehaviour
 			var body = whizzbang.GetComponent<Rigidbody2D>();
 			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody2D>().position;
 			whizzbang.transform.position = new Vector3(pos.x, pos.y, -0.5f);
-			
-			StartCoroutine(WhizzbangMovement(body, to,
-				attackType == TowerStats.AttackType.Burst ? BurstSpeed : WhizzbangSpeed,
-				attackType == TowerStats.AttackType.Burst));
+			var speed = attackType == TowerStats.AttackType.Burst ? BurstSpeed : WhizzbangSpeed;
+			StartCoroutine(WhizzbangMovement(body, to, speed, attackType == TowerStats.AttackType.Burst));
 		}catch(NullReferenceException){}
 	}
 
@@ -52,6 +50,7 @@ public class TowerManager: MonoBehaviour
 		{
 			Vector3 p = Vector3.MoveTowards(whizzbang.position, to, speed);
 			whizzbang.MovePosition(p);
+			yield return null;
 		}
 		if (explosion)
 		{

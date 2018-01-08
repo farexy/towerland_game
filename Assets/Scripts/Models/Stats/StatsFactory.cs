@@ -3,9 +3,9 @@ using Assets.Scripts.Models.GameObjects;
 
 namespace Assets.Scripts.Models.Stats
 {
-    public class StatsFactory
+  public class StatsFactory
   {
-     public UnitStats[] Units =
+    public UnitStats[] Units =
     {
       new UnitStats
       {
@@ -20,25 +20,25 @@ namespace Assets.Scripts.Models.Stats
       },
       new UnitStats
       {
-        Type = GameObjectType.Unit_Orc,
+        Type = GameObjectType.Unit_Impling,
         Damage = 10,
+        Health = 200,
+        IsAir = false,
+        MovementPriority = UnitStats.MovementPriorityType.Random,
+        Speed = 4,
+        Cost = 120,
+        Defence = UnitStats.DefenceType.LightArmor
+      },
+      new UnitStats
+      {
+        Type = GameObjectType.Unit_Orc,
+        Damage = 15,
         Health = 330,
         IsAir = false,
         MovementPriority = UnitStats.MovementPriorityType.Random,
         Speed = 6,
-        Cost = 120,
-        Defence = UnitStats.DefenceType.HeavyArmor
-      },
-      new UnitStats
-      {
-        Type = GameObjectType.Unit_Impling,
-        Damage = 15,
-        Health = 280,
-        IsAir = false,
-        MovementPriority = UnitStats.MovementPriorityType.Random,
-        Speed = 4,
         Cost = 200,
-        Defence = UnitStats.DefenceType.LightArmor
+        Defence = UnitStats.DefenceType.HeavyArmor
       },  
       new UnitStats
       {
@@ -116,7 +116,7 @@ namespace Assets.Scripts.Models.Stats
         AttackSpeed = 8,
         Damage = 100,
         Range = 5,
-        Cost = 350,
+        Cost = 400,
       },
       new TowerStats
       {
@@ -126,7 +126,7 @@ namespace Assets.Scripts.Models.Stats
         AttackSpeed = 5,
         Damage = 70,
         Range = 6,
-        Cost = 400,
+        Cost = 600,
         SpecialEffects = new []{new SpecialEffect{Effect = EffectId.Unit10xDamage_10PercentProbability}}
       }
     };
@@ -173,7 +173,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Defence = UnitStats.DefenceType.HeavyArmor,
         Attack = TowerStats.AttackType.Usual,
-        Coeff = 0.7
+        Coeff = 0.2
       },
       new DefenceCoeff
       {
@@ -185,7 +185,7 @@ namespace Assets.Scripts.Models.Stats
       {
         Defence = UnitStats.DefenceType.HeavyArmor,
         Attack = TowerStats.AttackType.Magic,
-        Coeff = 0.2
+        Coeff = 0.6
       },
     };
   }

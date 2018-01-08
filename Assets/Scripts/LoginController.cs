@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
@@ -12,11 +13,15 @@ public class LoginController : MonoBehaviour
 {
 
 	private bool _showIncorrectMsg;
-	
+	private string _pwdText = "";
+		
 	private InputField _login;
 	private InputField _password;
+	
 	public GameObject StartMenu;
 	public GameObject Go;
+	public GameObject RegisterPage;
+	
 	private void Start()
 	{
 		if (ConfigurationManager.Debug)
@@ -35,7 +40,18 @@ public class LoginController : MonoBehaviour
 			_login = GameObject.Find("LoginField").GetComponent<InputField>();
 			_password = GameObject.Find("PasswordField").GetComponent<InputField>();
 		}
-
+		_password.onValueChanged.AddListener(value =>
+		{
+			if (value.Length > _pwdText.Length)
+			{
+				_pwdText += value.Last();
+			}
+			if (value.Length < _pwdText.Length)
+			{
+				_pwdText = _pwdText.Substring(0, value.Length);
+			}
+			_password.text = new string('*', value.Length); 
+		});
 	}
 
 	private void OnGUI()
@@ -46,22 +62,26 @@ public class LoginController : MonoBehaviour
 		}	
 	}
 
+	public void OpenSignUp()
+	{
+		RegisterPage.SetActive(true);
+		gameObject.SetActive(false);
+		RegisterPage.GetComponent<RegisterController>().Init();
+	}
+
 	public void Login()
 	{
-		StartCoroutine(LoginPost(_login.text, _password.text));
+		StartCoroutine(LoginPost(_login.text, _pwdText));
 	}
 
 	private IEnumerator LoginPost(string login, string password)
 	{
 		var requestModel = new SignInRequestModel {Email = login, Password = password};
 		var postData = JsonConvert.SerializeObject(requestModel);
-		Dictionary<string, string> headers = new Dictionary<string, string> {{"Content-Type", "application/json"}};
-
-		byte[] pData = Encoding.ASCII.GetBytes(postData.ToCharArray());
 		
-		WWW www = new WWW(ConfigurationManager.LoginUserUrl, pData, headers);
-		yield return www;
-		string session = www.text.Replace("\"", string.Empty);
+		var www = new WwwWrapper(ConfigurationManager.LoginUserUrl, postData, null);
+		yield return www.WWW;
+		string session = www.WWW.text.Replace("\"", string.Empty);
 		if (session != string.Empty)
 		{
 			LocalStorage.Session = session;
