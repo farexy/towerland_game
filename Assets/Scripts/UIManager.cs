@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameObjects;
+using Assets.Scripts.Models.Interfaces;
 using Assets.Scripts.Models.State;
-using Assets.Scripts.Models.Stats;
+using Helpers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,7 @@ public class UIManager : MonoBehaviour
 	private IEnumerable<GameObjectType> _monsterTypes;
 	private IEnumerable<GameObjectType> _towerTypes;
 	private FieldManager _fieldManager;
-	private StatsLibrary _statsLibrary;
+	private IStatsLibrary _statsLibrary;
 
 	private PlayerSide _side;
 	private Texture2D _coinImg;
@@ -50,7 +51,7 @@ public class UIManager : MonoBehaviour
 		_castleImg = Resources.Load<Texture2D>("castle");
 		_fieldManager = GetComponent<FieldManager>();
 		_side = _fieldManager.Side;
-		_statsLibrary = new StatsLibrary();
+		_statsLibrary = LocalStorage.StatsLibrary;
 		_monsterTypes = Enum.GetValues(typeof(GameObjectType))
 			.Cast<GameObjectType>()
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
@@ -61,6 +62,10 @@ public class UIManager : MonoBehaviour
 	
 	private void OnGUI()
 	{
+		if (_fieldManager.Field == null)
+		{
+			return;
+		}
 		var selected = _fieldManager.Selected;
 		_side = _fieldManager.Side; // todo remove
 		DetailsPanel.SetActive(selected != GameObjectType.Undefined);

@@ -39,19 +39,19 @@ public class LoginController : MonoBehaviour
 		{
 			_login = GameObject.Find("LoginField").GetComponent<InputField>();
 			_password = GameObject.Find("PasswordField").GetComponent<InputField>();
+			_password.onValueChanged.AddListener(value =>
+			{
+				if (value.Length > _pwdText.Length)
+				{
+					_pwdText += value.Last();
+				}
+				if (value.Length < _pwdText.Length)
+				{
+					_pwdText = _pwdText.Substring(0, value.Length);
+				}
+				_password.text = new string('*', value.Length);
+			});
 		}
-		_password.onValueChanged.AddListener(value =>
-		{
-			if (value.Length > _pwdText.Length)
-			{
-				_pwdText += value.Last();
-			}
-			if (value.Length < _pwdText.Length)
-			{
-				_pwdText = _pwdText.Substring(0, value.Length);
-			}
-			_password.text = new string('*', value.Length); 
-		});
 	}
 
 	private void OnGUI()

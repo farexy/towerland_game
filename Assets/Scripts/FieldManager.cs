@@ -65,17 +65,10 @@ public class FieldManager : MonoBehaviour
 		}
 		Side = LocalStorage.CurrentSide;
 		IFieldFactory fact = new FieldFactoryStub();
-		Field = fact.ClassicField;
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
-		_stateResolver = new FieldStateActionResolver(Field);
-		_viewResolver = new ViewActionResolver(this);
-		
-		Width = Field.StaticData.Width;
-		Height = Field.StaticData.Height;
-		CoordinationHelper.Init(Width, Height);
-		InstantiateField();
 
+		StartCoroutine(Init());
 		StartCoroutine(NetworkWorker());
 		return;
 			Field.AddGameObject(new Unit
@@ -280,12 +273,12 @@ public class FieldManager : MonoBehaviour
 		yield return new WaitForSeconds(3);
 		RenderFieldState();
 
-		var clc = new StateCalculator(new StatsLibrary(), Field);
+		var clc = new StateCalculator(LocalStorage.StatsLibrary, Field);
 		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
 	}
 
 	
-	private IEnumerator PostCommand(GameObjectType type, Point? position, bool cheat = false)
+	private IEnumerator PostCommand(GameObjectType type, Point? position, string cheat = null)
 	{
 		var command = new StateChangeCommandRequestModel
 		{
@@ -297,7 +290,7 @@ public class FieldManager : MonoBehaviour
 			UnitCreationOptions = GameObjectLogical.ResolveType(type) == GameObjectType.Unit
 				? new []{new UnitCreationOption{Type = type}}
 				: null,
-			Money = cheat ? 100 : 0
+			CheatCommand = cheat
 		};
 		var www = _gameProcessNetworkWorker.PostCommand(command);
 		yield return www;
@@ -307,6 +300,11 @@ public class FieldManager : MonoBehaviour
 	{
 		while (true)
 		{
+			if (Field == null)
+			{
+				yield return null;
+				continue;
+			}
 			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
 			yield return www;
 			if (!string.IsNullOrEmpty(www.text))
@@ -314,7 +312,6 @@ public class FieldManager : MonoBehaviour
 				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.text);
 				_revision = ticks.Revision;
 				Field.SetState(ticks.State);
-				Field.AddMany(Field.State.Towers, Field.State.Units);
 				if (_resolver != null)
 				{
 					StopCoroutine(_resolver);
@@ -349,7 +346,7 @@ public class FieldManager : MonoBehaviour
 
 	public void Cheat()
 	{
-		StartCoroutine(PostCommand(GameObjectType.Undefined, null, true));
+		StartCoroutine(PostCommand(GameObjectType.Undefined, null, "addm"));
 	}
 
 	private IEnumerator PostEnd(PlayerSide winner)
@@ -377,5 +374,13 @@ public class FieldManager : MonoBehaviour
 		var www = new WwwWrapper(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session);
 		yield return www.WWW;
 		Field = JsonConvert.DeserializeObject<Field>(www.WWW.text);
+		
+		_stateResolver = new FieldStateActionResolver(Field);
+		_viewResolver = new ViewActionResolver(this);
+		
+		Width = Field.StaticData.Width;
+		Height = Field.StaticData.Height;
+		CoordinationHelper.Init(Width, Height);
+		InstantiateField();
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Assets.Scripts.Models.Stats;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
 using Helpers;
@@ -18,6 +19,7 @@ public class StartMenuController : MonoBehaviour
 	public GameObject Progress;
 	
 	private bool _searchForBattle;
+	private bool _initializing;
 	private const int Width = 200;
 	private const int Height = 100;
 	
@@ -25,6 +27,7 @@ public class StartMenuController : MonoBehaviour
 	void Start ()
 	{
 		_searchForBattle = false;
+		Initialize();
 	}
 	
 	// Update is called once per frame
@@ -34,6 +37,12 @@ public class StartMenuController : MonoBehaviour
 
 	private void OnGUI()
 	{
+		if (_initializing)
+		{
+			GUI.skin.box.fontSize = 24;
+			GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width, Height), "Loading");
+			GUI.skin.box.fontSize = 14;
+		}
 		if (_searchForBattle)
 		{
 			//var defaultSize = GUI.skin.box.fontSize;
@@ -95,12 +104,35 @@ public class StartMenuController : MonoBehaviour
 	{
 		StartCoroutine(GetExperience(LocalStorage.Session));
 	}
+
+	public void Initialize()
+	{
+		_initializing = true;
+		StartCoroutine(GetExperience(LocalStorage.Session));
+		StartCoroutine(GetStaticData(LocalStorage.Session));
+	}
 	
 	private IEnumerator GetExperience(string session)
 	{
 		var www = new WwwWrapper(ConfigurationManager.UserExpUrl, session);
 		yield return www.WWW;
 		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.WWW.text));
+	}
+
+	private IEnumerator GetStaticData(string session)
+	{
+		var www = new WwwWrapper(ConfigurationManager.StatsDataUrl, session);
+		yield return www.WWW;
+		if (ConfigurationManager.Debug)
+		{
+			var stats = new StatsFactory();
+			LocalStorage.StatsLibrary = new StatsLibrary(stats.Units, stats.Towers, stats.DefenceCoeffs);
+			_initializing = false;
+			yield break;
+		}
+		var resp = JsonConvert.DeserializeObject<StatsResponseModel>(www.WWW.text);
+		LocalStorage.StatsLibrary = new StatsLibrary(resp.UnitStats, resp.TowerStats, resp.DefenceCoeffs);
+		_initializing = false;
 	}
 	
 	public void ToStartMenu()

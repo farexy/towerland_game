@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameObjects;
+using Assets.Scripts.Models.Interfaces;
 using Assets.Scripts.Models.Stats;
 using Helpers;
 using UnityEngine;
@@ -13,13 +14,13 @@ public class TowerManager: MonoBehaviour
 	private const float BurstSpeed = 0.1f;
 
     private FieldManager _fieldManager;
-    private StatsLibrary _statsLibrary;
+    private IStatsLibrary _statsLibrary;
     private ObjectPool _pool;
 
     void Start ()
     {
         _fieldManager = GetComponent<FieldManager>();
-        _statsLibrary = new StatsLibrary();
+        _statsLibrary = LocalStorage.StatsLibrary;
         _pool = GetComponent<ObjectPool>();
     }
 

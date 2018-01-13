@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Models.State;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Network.Models
 {
@@ -10,7 +11,7 @@ namespace Assets.Scripts.Network.Models
         public Guid BattleId { set; get; }
         public IEnumerable<UnitCreationOption> UnitCreationOptions { set; get; }
         public IEnumerable<TowerCreationOption> TowerCreationOptions { set; get; }
-        public int Money { set; get; }
+        [JsonProperty("command")] public string CheatCommand { get; set; }
     
         public int CurrentTick { set; get; }
     }

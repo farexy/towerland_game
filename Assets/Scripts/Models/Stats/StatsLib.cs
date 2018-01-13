@@ -10,14 +10,13 @@ namespace Assets.Scripts.Models.Stats
         private readonly Dictionary<GameObjectType, IStats> _objects;
         private readonly IEnumerable<DefenceCoeff> _deffCoeffs;
       
-        public StatsLibrary()
+        public StatsLibrary(UnitStats[] units, TowerStats[] towers, DefenceCoeff[] defenceCoeffs)
         {
-            var factory = new StatsFactory();
-            _objects = factory.Towers
+            _objects = towers
                 .Cast<IStats>()
-                .Union(factory.Units.Cast<IStats>())
+                .Union(units.Cast<IStats>())
                 .ToDictionary(el => el.Type, el => el);
-            _deffCoeffs = factory.DefenceCoeffs;
+            _deffCoeffs = defenceCoeffs;
         }
     
         public UnitStats GetUnitStats(GameObjectType type)

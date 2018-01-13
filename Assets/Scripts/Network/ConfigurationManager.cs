@@ -2,7 +2,7 @@
 {
     public static class ConfigurationManager
     {
-        public const bool Debug = false;
+        public const bool Debug = true;
         //public const string Server = "http://localhost:64283";
         public static string Server { get; set; }
 
@@ -59,6 +59,11 @@
         public static string UserExpUrl
         {
             get { return Server + "/user/exp"; }
+        }
+
+        public static string StatsDataUrl
+        {
+            get { return Server + "/data/stats"; }
         }
     }
 }

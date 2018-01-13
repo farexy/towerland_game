@@ -19,12 +19,16 @@ public class MonstersManager : MonoBehaviour
 	void Start ()
 	{
 		_fieldManager = GetComponent<FieldManager>();
-		_statsLibrary = new StatsLibrary();
+		_statsLibrary = LocalStorage.StatsLibrary;
 		
 	}
 
 	private void OnGUI()
 	{
+		if (_fieldManager.Field == null)
+		{
+			return;
+		}
 		foreach (var unit in _fieldManager.Field.State.Units)
 		{
 			GameObjectScript unitObj;
