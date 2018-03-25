@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Assets.Scripts.Models.Stats;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
@@ -27,7 +26,6 @@ public class StartMenuController : MonoBehaviour
 	void Start ()
 	{
 		_searchForBattle = false;
-		Initialize();
 	}
 	
 	// Update is called once per frame
@@ -94,10 +92,7 @@ public class StartMenuController : MonoBehaviour
 	{
 		LevelText.text = "Level: " + exp.Level;
 		ExperienceText.text = string.Format("{0}/{1}", exp.RelativeExperience, exp.TotalLevelExperience);
-		var newWidth = ((float) exp.RelativeExperience / exp.TotalLevelExperience) *
-		               Progress.transform.parent.GetComponent<RectTransform>().sizeDelta.x;
-		Progress.transform.GetComponent<RectTransform>().sizeDelta = new Vector2(newWidth, Progress.transform.GetComponent<RectTransform>().sizeDelta.y);
-		Progress.transform.GetComponent<RectTransform>().anchoredPosition = new Vector2(newWidth / 2,0);
+		Progress.GetComponent<ProgressBarController>().SetProgressRate((float)exp.RelativeExperience / exp.TotalLevelExperience);
 	}
 
 	public void LoadExp()

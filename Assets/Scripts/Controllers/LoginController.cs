@@ -33,7 +33,7 @@ public class LoginController : MonoBehaviour
 		{
 			StartMenu.SetActive(true);
 			gameObject.SetActive(false);
-			Go.GetComponent<StartMenuController>().LoadExp();
+			Go.GetComponent<StartMenuController>().Initialize();
 		}
 		if (!ConfigurationManager.Debug)
 		{
@@ -87,7 +87,7 @@ public class LoginController : MonoBehaviour
 			LocalStorage.Session = session;
 			StartMenu.SetActive(true);
 			gameObject.SetActive(false);
-			Go.GetComponent<StartMenuController>().LoadExp();
+			Go.GetComponent<StartMenuController>().Initialize();
 		}
 		else
 		{

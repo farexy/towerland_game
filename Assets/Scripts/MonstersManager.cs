@@ -15,7 +15,6 @@ public class MonstersManager : MonoBehaviour
 	private IStatsLibrary _statsLibrary;
 	private FieldManager _fieldManager;
 	
-	// Use this for initialization
 	void Start ()
 	{
 		_fieldManager = GetComponent<FieldManager>();
@@ -49,7 +48,7 @@ public class MonstersManager : MonoBehaviour
 	{
 		var  obj = _fieldManager.GetGameObjectById(gameId);
 		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
-		var relativeSpeed =  FixedUpdate / FieldManager.TickSecond / speed;
+		var relativeSpeed =  1.25f * FixedUpdate / FieldManager.TickSecond / speed;
 		relativeSpeed *= effect == EffectId.UnitFreezed ? SpecialEffect.FreezedSlowCoeff : 1;
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
 		obj.GetComponent<MonsterController>().SetMovement(end ? relativeSpeed / 2 : relativeSpeed, CoordinationHelper.GetViewPoint(pos));

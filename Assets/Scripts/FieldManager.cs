@@ -22,7 +22,7 @@ using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
 
 public class FieldManager : MonoBehaviour
 {
-	public const float TickSecond = 0.5f;
+	public const float TickSecond = 0.4f;
 	private readonly Quaternion Quaternion = UnityEngine.Quaternion.Euler(90, 90, 270);
 	
 	public GameObject Ground;
@@ -322,12 +322,20 @@ public class FieldManager : MonoBehaviour
 			yield return new WaitForSeconds(0.4f); 	
 		}
 	}
+
+	private IEnumerator Tick()
+	{
+		yield return new WaitForSeconds(TickSecond);
+		_tickCount++;
+	}
 	
 	private IEnumerator ResolveActions(IEnumerable<GameTick> actionList)
 	{
 		_tickCount = 0;
 		foreach (var tick in actionList)
 		{
+			//var currentTick = _tickCount;
+			//StartCoroutine(Tick());
 			foreach (var action in tick.Actions)
 			{
 				_viewResolver.Resolve(action);
@@ -336,6 +344,7 @@ public class FieldManager : MonoBehaviour
 			}
 			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);
+			//yield return new WaitUntil(() => currentTick < _tickCount);
 		}
 	}
 
