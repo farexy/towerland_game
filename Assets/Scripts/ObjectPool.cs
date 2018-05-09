@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Models.GameObjects;
+using Assets.Scripts.Network;
 using UnityEngine;
 
 public class ObjectPool : MonoBehaviour
@@ -69,13 +70,25 @@ public class ObjectPool : MonoBehaviour
 			}
 		}
 
-		return null;
+		return CreateCopy(namePrefix);
 	}
 
 	public void PutToPool(GameObjectScript obj)
 	{
+		if (obj.name.Contains("_COPIED"))
+		{
+			Destroy(obj);
+		}
 		obj.IsUsed = false;
 		obj.GameId = 0;
 		obj.transform.position = PoolPosition;
+	}
+
+	public GameObjectScript CreateCopy(string namePrefix)
+	{
+		var obj = GameObject.Find(namePrefix + "_1");
+		var newObj = Instantiate(obj);
+		newObj.name += "_COPIED" + GameMath.Rand.Next();
+		return newObj.GetComponent<GameObjectScript>();
 	}
 }
