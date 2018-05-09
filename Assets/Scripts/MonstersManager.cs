@@ -41,6 +41,13 @@ public class MonstersManager : MonoBehaviour
 			GUI.backgroundColor = Color.clear;
 			var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
 			GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), helthIndicator);
+
+			var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
+			if (healthBar != null)
+			{
+				healthBar.SetProgressRate((float)unit.Health / statsHealth);
+				//healthBar.transform.parent.rotation = new Quaternion();
+			}
 		}
 	}
 

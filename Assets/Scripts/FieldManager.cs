@@ -259,7 +259,7 @@ public class FieldManager : MonoBehaviour
 
 	public void SwitchSide()
 	{
-		Side = Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters;
+		Side = Side.Invert();
 		_session = _session == LocalStorage.Session ? LocalStorage.HelpSession : LocalStorage.Session;
 	}
 	
@@ -350,7 +350,7 @@ public class FieldManager : MonoBehaviour
 
 	public void LeaveBattle()
 	{
-		StartCoroutine(PostEnd(Side == PlayerSide.Monsters ? PlayerSide.Towers : PlayerSide.Monsters));
+		StartCoroutine(PostEnd(Side.Invert()));
 	}
 
 	public void Cheat()
@@ -362,12 +362,12 @@ public class FieldManager : MonoBehaviour
 	{
 		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
 		yield return www.WWW;
-		StartCoroutine(Leave(Side));
+		StartCoroutine(Leave(winner));
 	}
 	
-	private IEnumerator Leave(PlayerSide winner)
+	private IEnumerator Leave(PlayerSide playerSide)
 	{
-		Winner = winner;
+		Winner = playerSide;
 		yield return new WaitForSeconds(1);
 		SceneManager.LoadScene("StartPages");
 	}
