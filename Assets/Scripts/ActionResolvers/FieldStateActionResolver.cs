@@ -51,6 +51,10 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.UnitEffectCanseled:
                     _field[action.UnitId].Effect = SpecialEffect.Empty;
                     break;
+                    
+                case ActionId.UnitAppears:
+                    _field.AddGameObject(action.GoUnit);
+                    break;
             }
         }
 

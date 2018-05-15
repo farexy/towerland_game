@@ -19,6 +19,7 @@ public class ObjectPool : MonoBehaviour
 		{GameObjectType.Unit_Goblin, "Goblin"},
 		{GameObjectType.Unit_Dragon, "Dragon"},
 		{GameObjectType.Unit_Golem, "Golem"},
+		{GameObjectType.Unit_Necromancer, "Necromancer"},
 		
 		{GameObjectType.Tower_Usual, "UsualTower"},
 		{GameObjectType.Tower_Cannon, "CannonTower"},

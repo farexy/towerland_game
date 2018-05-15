@@ -201,7 +201,7 @@ public class FieldManager : MonoBehaviour
 		}
 	}
 	
-	private void RenderFieldState()
+	public void RenderFieldState()
 	{
 		foreach (var tower in Field.State.Towers)
 		{
@@ -338,9 +338,9 @@ public class FieldManager : MonoBehaviour
 			//StartCoroutine(Tick());
 			foreach (var action in tick.Actions)
 			{
-				_viewResolver.Resolve(action);
-				yield return null;
 				_stateResolver.Resolve(action);
+				yield return null;
+				_viewResolver.Resolve(action);
 			}
 			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);

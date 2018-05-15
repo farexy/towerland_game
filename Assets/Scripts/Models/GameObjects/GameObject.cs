@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.GameObjects
 {
-  public class GameObjectLogical : ICloneable
+  public class GameObjectLogical : ICloneable, IEquatable<GameObjectLogical>
   {
     [JsonProperty("i")] public int GameId { set; get; }
     [JsonProperty("p")] public Point Position { get; set; }
@@ -54,5 +54,32 @@ namespace Assets.Scripts.Models.GameObjects
         Effect = new SpecialEffect{Effect = Effect.Effect, Duration = Effect.Duration}
       };
     }
+    
+    #region Equals
+
+    public bool Equals(GameObjectLogical other)
+    {
+      if (ReferenceEquals(null, other)) return false;
+      if (ReferenceEquals(this, other)) return true;
+      return GameId == other.GameId;
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj)) return false;
+      if (ReferenceEquals(this, obj)) return true;
+      if (obj.GetType() != this.GetType()) return false;
+      return Equals((GameObjectLogical) obj);
+    }
+
+    public override int GetHashCode()
+    {
+      unchecked
+      {
+        return base.GetHashCode();
+      }
+    }
+
+    #endregion
   }
 }

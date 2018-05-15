@@ -43,6 +43,9 @@ namespace Assets.Scripts.Models.Resolvers
                     //logic
                     _fieldManager.RemoveGameObject(action.UnitId);
                     break;
+                case ActionId.UnitAppears:
+                    _fieldManager.RenderFieldState();
+                    break;
             }
         }
 
