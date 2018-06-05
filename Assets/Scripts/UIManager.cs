@@ -129,7 +129,7 @@ public class UIManager : MonoBehaviour
 			var lastTime = _fieldManager.Field.StaticData.EndTimeUtc - DateTime.UtcNow;
 			if (lastTime < TimeSpan.FromMinutes(5))
 			{
-				GUI.contentColor = _side == PlayerSide.Monsters ? Color.green : Color.red;
+				GUI.contentColor = _side == PlayerSide.Monsters ? Color.red : Color.green;
 			}
 			else
 			{

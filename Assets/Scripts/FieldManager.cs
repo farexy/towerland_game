@@ -70,90 +70,6 @@ public class FieldManager : MonoBehaviour
 
 		StartCoroutine(Init());
 		StartCoroutine(NetworkWorker());
-		return;
-			Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Skeleton,
-			PathId = 4,
-			Position = Field.StaticData.Start,
-			Health = 100
-		});
-		Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Goblin,
-			PathId = 3,
-			Position = Field.StaticData.Start,
-			Health = 200
-		});
-		Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Dragon,
-			PathId = 3,
-			Position = Field.StaticData.Start,
-			Health = 200
-		});		
-		Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Orc,
-			PathId = 3,
-			Position = Field.StaticData.Start,
-			Health = 200
-		});
-		Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Golem,
-			PathId = 3,
-			Position = Field.StaticData.Start,
-			Health = 200
-		});
-		Field.AddGameObject(new Unit
-		{
-			Type = GameObjectType.Unit_Impling,
-			PathId = 3,
-			Position = Field.StaticData.Start,
-			Health = 200
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_FortressWatchtower,
-			Position = new Point(6, 6)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Cannon,
-			Position = new Point(4, 4)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Magic,
-			Position = new Point(8, 2)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Usual,
-			Position = new Point(7, 1)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Frost,
-			Position = new Point(7, 4)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_FortressWatchtower,
-			Position = new Point(2, 3)
-		});
-		Field.AddGameObject(new Tower
-		{
-			Type = GameObjectType.Tower_Magic,
-			Position = new Point(8, 8)
-		});
-		StartCoroutine(StartShow());
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 	
 	private void InstantiateField()
@@ -213,7 +129,7 @@ public class FieldManager : MonoBehaviour
 			_gameObjects.Add(tower.GameId, obj);
 			obj.transform.position = CoordinationHelper.GetViewPoint(tower.Position);
 		}
-		foreach (var unit in Field.State.Units)
+		foreach (var unit in Field.State.Units.ToArray())
 		{
 			if (_gameObjects.ContainsKey(unit.GameId))
 			{
@@ -231,6 +147,16 @@ public class FieldManager : MonoBehaviour
 			obj1.transform.position = FlyingObjects.Contains(obj1.Type)
 				? CoordinationHelper.GetViewPoint3(unit.Position)
 				: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);	
+		}
+		
+		//delete unexisting
+		foreach (var gId in _gameObjects.Keys.ToArray())
+		{
+			if (!Field.State.Objects.ContainsKey(gId))
+			{
+				Debug.Log("Garbage collected " + gId);
+				RemoveGameObject(gId);
+			}
 		}
 	}
 
@@ -305,6 +231,10 @@ public class FieldManager : MonoBehaviour
 				yield return null;
 				continue;
 			}
+			if (Field.StaticData.EndTimeUtc < DateTime.UtcNow)
+			{
+				yield return TryPostEnd();
+			}
 			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
 			yield return www;
 			if (!string.IsNullOrEmpty(www.text))
@@ -358,6 +288,12 @@ public class FieldManager : MonoBehaviour
 		StartCoroutine(PostCommand(GameObjectType.Undefined, null, "addm"));
 	}
 
+	private IEnumerator TryPostEnd()
+	{
+		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+		yield return www.WWW;
+	}
+	
 	private IEnumerator PostEnd(PlayerSide winner)
 	{
 		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
@@ -368,10 +304,9 @@ public class FieldManager : MonoBehaviour
 	private IEnumerator Leave(PlayerSide playerSide)
 	{
 		Winner = playerSide;
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(3);
 		SceneManager.LoadScene("StartPages");
 	}
-
 
 	public void End(PlayerSide winner)
 	{

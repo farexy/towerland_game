@@ -26,7 +26,7 @@ public class CellController : MonoBehaviour
 
 	private void OnMouseDown()
 	{
-		Debug.Log("X:" + Point + " Y:" + Point);
+		//Debug.Log("X:" + Point + " Y:" + Point);
 		if (GameObjectLogical.ResolveType(_manager.Selected) == GameObjectType.Tower)
 		{
 			_manager.Command(Point);

@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Models.Effects;
+﻿using System;
+using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.Interfaces;
-using Assets.Scripts.Models.Stats;
 using Helpers;
 using UnityEngine;
 
@@ -28,27 +28,30 @@ public class MonstersManager : MonoBehaviour
 		{
 			return;
 		}
-		foreach (var unit in _fieldManager.Field.State.Units)
+		try
 		{
-			GameObjectScript unitObj;
-			if (!_fieldManager.TryGetGameObjectById(unit.GameId, out unitObj))
+			foreach (var unit in _fieldManager.Field.State.Units)
 			{
-				continue;
-			}
-			var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
-			var helthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
-			GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
-			GUI.backgroundColor = Color.clear;
-			var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
-			GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), helthIndicator);
+				GameObjectScript unitObj;
+				if (!_fieldManager.TryGetGameObjectById(unit.GameId, out unitObj))
+				{
+					continue;
+				}
+				var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
+				var helthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
+				GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
+				GUI.backgroundColor = Color.clear;
+				var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
+				GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), helthIndicator);
 
-			var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
-			if (healthBar != null)
-			{
-				healthBar.SetProgressRate((float)unit.Health / statsHealth);
-				//healthBar.transform.parent.rotation = new Quaternion();
+				var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
+				if (healthBar != null)
+				{
+					healthBar.SetProgressRate((float) unit.Health / statsHealth);
+					//healthBar.transform.parent.rotation = new Quaternion();
+				}
 			}
-		}
+		}catch(InvalidOperationException){}
 	}
 
 	public void MoveUnit(int gameId, Point pos, EffectId effect)
