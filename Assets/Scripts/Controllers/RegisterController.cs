@@ -120,9 +120,9 @@ public class RegisterController : MonoBehaviour
 			Nickname = _nicknameField.text,
 			Password = _pwdText
 		};
-		var www = new WwwWrapper(ConfigurationManager.SignUpUserUrl, JsonConvert.SerializeObject(postData), null);
-		yield return www.WWW;
-		string session = www.WWW.text.Replace("\"", string.Empty);
+		var www = new HttpRequest(ConfigurationManager.SignUpUserUrl, JsonConvert.SerializeObject(postData)).Request;
+		yield return www.Send();
+		string session = www.downloadHandler.text.Replace("\"", string.Empty);
 		if (session != string.Empty)
 		{
 			LocalStorage.Session = session;

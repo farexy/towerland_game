@@ -6,6 +6,7 @@ using Assets.Scripts.Network.Models;
 using Helpers;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts.Network
 {
@@ -25,18 +26,18 @@ namespace Assets.Scripts.Network
             return www;
         }
 
-        public WWW GetActionsByTicks(Guid battleId)
+        public UnityWebRequest GetActionsByTicks(Guid battleId)
         {
             var url = string.Format(ConfigurationManager.ActionsByTicksUrl, battleId);
-            WWW www = new WWW(url);
+            var www = new HttpRequest(url).Request;
             return www;
         }
 
-        public WWW GetCheckBattleStateChange(Guid battleId, int version)
+        public UnityWebRequest GetCheckBattleStateChange(Guid battleId, int version)
         {
             var url = string.Format(ConfigurationManager.GameCheckStateChanged, battleId, version);
-            WwwWrapper www = new WwwWrapper(url, LocalStorage.Session);
-            return www.WWW;
+            var www = new HttpRequest(url, LocalStorage.Session);
+            return www.Request;
         }
 
         public WWW PostCommand(StateChangeCommandRequestModel requestModel)

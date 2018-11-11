@@ -6,12 +6,12 @@ namespace Assets.Scripts.Models.Effects
   {
     public const int FreezedSlowCoeff = 2;
     
-    [JsonProperty("i")] public EffectId Effect { set; get; }
+    [JsonProperty("i")] public EffectId Id { set; get; }
     [JsonProperty("d")] public int Duration { set; get; }
 
     public static SpecialEffect Empty
     {
-      get { return new SpecialEffect {Effect = EffectId.None, Duration = 0}; }
+      get { return new SpecialEffect {Id = EffectId.None, Duration = 0}; }
     }
   }
 }

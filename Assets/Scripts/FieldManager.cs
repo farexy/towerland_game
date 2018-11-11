@@ -138,6 +138,8 @@ public class FieldManager : MonoBehaviour
 				obj.transform.position = FlyingObjects.Contains(obj.Type)
 					? CoordinationHelper.GetViewPoint3(unit.Position)
 					: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);
+				
+				obj.GetComponent<MonsterController>().SetMovement(0, obj.transform.position);
 				continue;
 			}
 
@@ -199,8 +201,8 @@ public class FieldManager : MonoBehaviour
 		yield return new WaitForSeconds(3);
 		RenderFieldState();
 
-		var clc = new StateCalculator(LocalStorage.StatsLibrary, Field);
-		StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
+		//var clc = new StateCalculator(LocalStorage.StatsLibrary, Field);
+		//StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
 	}
 
 	
@@ -236,10 +238,10 @@ public class FieldManager : MonoBehaviour
 				yield return TryPostEnd();
 			}
 			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
-			yield return www;
-			if (!string.IsNullOrEmpty(www.text))
+			yield return www.Send();
+			if (!string.IsNullOrEmpty(www.downloadHandler.text))
 			{
-				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.text);
+				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.downloadHandler.text);
 				_revision = ticks.Revision;
 				Field.SetState(ticks.State);
 				if (_resolver != null)
@@ -290,14 +292,14 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator TryPostEnd()
 	{
-		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-		yield return www.WWW;
+		var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+		yield return www.Request.Send();
 	}
 	
 	private IEnumerator PostEnd(PlayerSide winner)
 	{
-		var www = new WwwWrapper(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-		yield return www.WWW;
+		var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+		yield return www.Request.Send();
 		StartCoroutine(Leave(winner));
 	}
 	
@@ -315,9 +317,9 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator Init()
 	{
-		var www = new WwwWrapper(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session);
-		yield return www.WWW;
-		Field = JsonConvert.DeserializeObject<Field>(www.WWW.text);
+		var httpRequest = new HttpRequest(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session).Request;
+		yield return httpRequest.Send();
+		Field = JsonConvert.DeserializeObject<Field>(httpRequest.downloadHandler.text);
 		
 		_stateResolver = new FieldStateActionResolver(Field);
 		_viewResolver = new ViewActionResolver(this);

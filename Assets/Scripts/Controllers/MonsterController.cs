@@ -39,23 +39,34 @@ public class MonsterController : MonoBehaviour
 		if (CoordinationHelper.DifferentFloats(oldPos.x, newPos.x) && oldPos.x > newPos.x)
 		{
 			GetComponent<Rigidbody2D>().MoveRotation(90);
-			_curDir = Direction.Left;
+			SetCurDir(Direction.Left);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.x, newPos.x) && oldPos.x < newPos.x)
 		{
 			GetComponent<Rigidbody2D>().MoveRotation(270);
-			_curDir = Direction.Right;
+			SetCurDir(Direction.Right);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.y, newPos.y) && oldPos.y < newPos.y)
 		{
 			GetComponent<Rigidbody2D>().MoveRotation(0);
-			_curDir = Direction.Up;
+			SetCurDir(Direction.Up);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.y, newPos.y) && oldPos.y > newPos.y)
 		{
 			GetComponent<Rigidbody2D>().MoveRotation(180);
-			_curDir = Direction.Down;
+			SetCurDir(Direction.Down);
 		}
+	}
+
+	private void SetCurDir(Direction dir)
+	{
+		if ((dir == Direction.Down || dir == Direction.Up) && (_curDir == Direction.Left || _curDir == Direction.Right)
+		    || (dir == Direction.Left || dir == Direction.Right) && (_curDir == Direction.Up || _curDir == Direction.Down))
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
+		}
+		_curDir = dir;
 	}
 	
 	private enum Direction

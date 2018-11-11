@@ -37,7 +37,7 @@ namespace Assets.Scripts.Models.Resolvers
                     break;
 
                 case ActionId.UnitFreezes:
-                    _field[action.UnitId].Effect = new SpecialEffect{Duration = action.WaitTicks, Effect = EffectId.UnitFreezed};
+                    _field[action.UnitId].Effect = new SpecialEffect{Duration = action.WaitTicks, Id = EffectId.UnitFreezed};
                     break;
           
                 case ActionId.UnitDies:
@@ -78,6 +78,10 @@ namespace Assets.Scripts.Models.Resolvers
                     break;
                 case ActionId.TowerPlayerRecievesMoney:
                     _field.State.TowerMoney += action.Money;
+                    break;
+                case ActionId.PlayersRecievesMoney:
+                    _field.State.TowerMoney += action.Money;
+                    _field.State.MonsterMoney += action.Money;
                     break;
             }
         }

@@ -64,24 +64,24 @@ public class StartMenuController : MonoBehaviour
 	private IEnumerator FindBattle()
 	{
 		_searchForBattle = true;
-		var www = new WwwWrapper(ConfigurationManager.SearchBattleUrl, LocalStorage.Session);
-		yield return www.WWW;
+		var www = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.Session).Request;
+		yield return www.Send();
 		if (ConfigurationManager.Debug)
 		{
-			var www1 = new WwwWrapper(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession);
-			yield return www1.WWW;
+			var www1 = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession).Request;
+			yield return www1.Send();
 		}
 		var resp = new BattleSearchCheckResponseModel();
 		while (!resp.Found)
 		{
-			var www2 = new WwwWrapper(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
-			yield return www2.WWW;
-			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.WWW.text);
+			var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session).Request;
+			yield return www2.Send();
+			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.downloadHandler.text);
 		}
 		if (ConfigurationManager.Debug)
 		{
-			var www3 = new WwwWrapper(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession);
-			yield return www3.WWW;
+			var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession).Request;
+			yield return www3.Send();
 		}
 		LocalStorage.CurrentBattleId = resp.BattleId;
 		LocalStorage.CurrentSide = resp.Side;
@@ -109,23 +109,23 @@ public class StartMenuController : MonoBehaviour
 	
 	private IEnumerator GetExperience(string session)
 	{
-		var www = new WwwWrapper(ConfigurationManager.UserExpUrl, session);
-		yield return www.WWW;
-		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.WWW.text));
+		var www = new HttpRequest(ConfigurationManager.UserExpUrl, session).Request;
+		yield return www.Send();
+		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.downloadHandler.text));
 	}
 
 	private IEnumerator GetStaticData(string session)
 	{
-		var www = new WwwWrapper(ConfigurationManager.StatsDataUrl, session);
-		yield return www.WWW;
-		if (ConfigurationManager.Debug)
-		{
-			var stats = new StatsFactory();
-			LocalStorage.StatsLibrary = new StatsLibrary(stats.Units, stats.Towers, stats.DefenceCoeffs);
-			_initializing = false;
-			yield break;
-		}
-		var resp = JsonConvert.DeserializeObject<StatsResponseModel>(www.WWW.text);
+		var www = new HttpRequest(ConfigurationManager.StatsDataUrl, session).Request;
+		yield return www.Send();
+//		if (ConfigurationManager.Debug)
+//		{
+//			var stats = new StatsFactory();
+//			LocalStorage.StatsLibrary = new StatsLibrary(stats.Units, stats.Towers, stats.DefenceCoeffs);
+//			_initializing = false;
+//			yield break;
+//		}
+		var resp = JsonConvert.DeserializeObject<StatsResponseModel>(www.downloadHandler.text);
 		LocalStorage.StatsLibrary = new StatsLibrary(resp.UnitStats, resp.TowerStats, resp.DefenceCoeffs);
 		_initializing = false;
 	}

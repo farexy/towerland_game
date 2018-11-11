@@ -3,7 +3,12 @@ guid: a2346cd5196a22940ab060c781ab8b6a
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
+    100000: //RootNode
+    400000: //RootNode
+    2300000: //RootNode
+    3300000: //RootNode
     4300000: tropical_plant
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 3

@@ -146,7 +146,7 @@ public class UIManager : MonoBehaviour
 			{
 				GUI.skin.box.fontSize = 24;
 				GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width * 5, Height), 
-					_fieldManager.Winner == PlayerSide.Monsters ? "Monster player wins!" : "Tower player wins!");
+					string.Format("{0} player wins!", _fieldManager.Winner));
 				GUI.skin.box.fontSize = 14;
 			}
 
@@ -206,15 +206,14 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	private string GetSpecialEffectText(SpecialEffect[] specialEffects)
+	private string GetSpecialEffectText(SpecialEffect specialEffect)
 	{
-		if (specialEffects != null && specialEffects.Any())
+		if (specialEffect != null && specialEffect != SpecialEffect.Empty)
 		{
-			var effect = specialEffects.First();
-			switch (effect.Effect)
+			switch (specialEffect.Id)
 			{
 					case EffectId.UnitFreezed:
-						return string.Format("Freezing monsters, duration: {0} ticks", effect.Duration);
+						return string.Format("Freezing monsters, duration: {0} ticks", specialEffect.Duration);
 					case EffectId.Unit10xDamage_10PercentProbability:
 						return string.Format("10% possibility of 10x damage");
 			}
