@@ -59,12 +59,7 @@ public class FieldManager : MonoBehaviour
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
 		_battleId = LocalStorage.CurrentBattleId;
 		_session = LocalStorage.Session;
-		if (ConfigurationManager.Debug)
-		{
-			Side = PlayerSide.Monsters;
-		}
 		Side = LocalStorage.CurrentSide;
-		IFieldFactory fact = new FieldFactoryStub();
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
 
@@ -74,7 +69,6 @@ public class FieldManager : MonoBehaviour
 	
 	private void InstantiateField()
 	{
-		GameObject tmp;
 		//look through all the cells in array, wich reprsents the maze, and draw it
 		//the coords of the graphical cells match the index of array elements
 		for (int i = 0; i < Height; i++)
@@ -86,6 +80,7 @@ public class FieldManager : MonoBehaviour
 				try
 				{
 					var point = new Point(i, j);
+					GameObject tmp;
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Entrance)
 					{
 						tmp = Instantiate(Entrance, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;

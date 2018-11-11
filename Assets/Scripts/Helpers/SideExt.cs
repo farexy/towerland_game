@@ -19,5 +19,15 @@ namespace Helpers
                     throw new ArgumentOutOfRangeException("side", side, null);
             }
         }
+
+        public static bool IsMonsters(this PlayerSide playerSide)
+        {
+            return playerSide == PlayerSide.Monsters;
+        }
+        
+        public static bool IsTowers(this PlayerSide playerSide)
+        {
+            return playerSide == PlayerSide.Towers;
+        }
     }
 }

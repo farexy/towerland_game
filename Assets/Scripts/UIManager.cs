@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
 	private const int SmallHeight = 20;
 	private const int NormalHeight = 40;
 
+	private Dictionary<GameObjectType, Texture2D> _texturesCache;
 	private IEnumerable<GameObjectType> _monsterTypes;
 	private IEnumerable<GameObjectType> _towerTypes;
 	private FieldManager _fieldManager;
@@ -50,8 +51,8 @@ public class UIManager : MonoBehaviour
 		_coinImg = Resources.Load<Texture2D>("coin");
 		_castleImg = Resources.Load<Texture2D>("castle");
 		_fieldManager = GetComponent<FieldManager>();
-		_side = _fieldManager.Side;
 		_statsLibrary = LocalStorage.StatsLibrary;
+		_texturesCache = new Dictionary<GameObjectType, Texture2D>();
 		_monsterTypes = Enum.GetValues(typeof(GameObjectType))
 			.Cast<GameObjectType>()
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
@@ -70,7 +71,7 @@ public class UIManager : MonoBehaviour
 		_side = _fieldManager.Side; // todo remove
 		DetailsPanel.SetActive(selected != GameObjectType.Undefined);
 		//creates a GUI rect in left corner, where we may see the current number of collected coins
-		var playerSideTypes = _side == PlayerSide.Monsters ? _monsterTypes : _towerTypes;
+		var playerSideTypes = _side.IsMonsters() ? _monsterTypes : _towerTypes;
 		try
 		{
 			var x = 0;
@@ -78,7 +79,7 @@ public class UIManager : MonoBehaviour
 			{
 				GUI.Box(new Rect(StartX + x, Y, Width, Height), GetGameObjectImage(t));
 				
-				var cost = _side == PlayerSide.Towers
+				var cost = _side.IsTowers()
 					? _statsLibrary.GetTowerStats(t).Cost
 					: _statsLibrary.GetUnitStats(t).Cost;
 
@@ -91,13 +92,14 @@ public class UIManager : MonoBehaviour
 				{
 					if (selected == t)
 					{
+						
 						selected = GameObjectType.Undefined;
 						_fieldManager.Selected = GameObjectType.Undefined;
 					}
 					else
 					{
 						_fieldManager.Selected = t;
-						_fieldManager.Selected = t;
+						LoadDetailsIcon();
 					}
 				}
 				GUI.backgroundColor = Color.gray;
@@ -108,7 +110,7 @@ public class UIManager : MonoBehaviour
 			GUI.Box(new Rect(StartX + x, Y, Width, NormalHeight), new GUIContent(PlayerMoney().ToString(), _coinImg));
 			
 			GUI.backgroundColor = Color.blue;
-			if(_side == PlayerSide.Monsters && _fieldManager.Selected != GameObjectType.Undefined 
+			if(_side.IsMonsters() && _fieldManager.Selected != GameObjectType.Undefined 
 			   && GUI.Button(new Rect(StartX + x, Y + NormalHeight, Width, NormalHeight), "Buy!"))
 			{
 				_fieldManager.Command();
@@ -118,7 +120,7 @@ public class UIManager : MonoBehaviour
 			
 			if (_fieldManager.Field.State.Castle.Health < 20)
 			{
-				GUI.contentColor = _side == PlayerSide.Monsters ? Color.green : Color.red;
+				GUI.contentColor = _side.IsMonsters() ? Color.green : Color.red;
 			}
 			else
 			{
@@ -129,7 +131,7 @@ public class UIManager : MonoBehaviour
 			var lastTime = _fieldManager.Field.StaticData.EndTimeUtc - DateTime.UtcNow;
 			if (lastTime < TimeSpan.FromMinutes(5))
 			{
-				GUI.contentColor = _side == PlayerSide.Monsters ? Color.red : Color.green;
+				GUI.contentColor = _side.IsMonsters() ? Color.red : Color.green;
 			}
 			else
 			{
@@ -169,6 +171,12 @@ public class UIManager : MonoBehaviour
 		_offDefTypeText = GameObject.Find("offDef_text").GetComponent<Text>();
 		_specialText = GameObject.Find("special_text").GetComponent<Text>();
 	}
+
+	private void LoadDetailsIcon()
+	{
+		var texture = GetGameObjectImage(_fieldManager.Selected);
+		_iconImg.overrideSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
+	}
 	
 	private void SetDetails()
 	{
@@ -177,8 +185,6 @@ public class UIManager : MonoBehaviour
 		{
 			return;
 		}
-		var texture = GetGameObjectImage(selected);
-		_iconImg.overrideSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
 		_nameText.text = GetName(selected);
 		if (GameObjectLogical.ResolveType(selected) == GameObjectType.Tower)
 		{
@@ -230,12 +236,17 @@ public class UIManager : MonoBehaviour
 	
 	private Texture2D GetGameObjectImage(GameObjectType type)
 	{
-		return Resources.Load<Texture2D>(type.ToString());
+		if (_texturesCache.ContainsKey(type))
+		{
+			return _texturesCache[type];
+		}
+		
+		return _texturesCache[type] = Resources.Load<Texture2D>(type.ToString());
 	}
 
 	private int PlayerMoney()
 	{
-		var money = _side == PlayerSide.Monsters
+		var money = _side.IsMonsters()
 			? _fieldManager.Field.State.MonsterMoney
 			: _fieldManager.Field.State.TowerMoney;
 
