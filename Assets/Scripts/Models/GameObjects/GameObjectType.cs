@@ -8,7 +8,6 @@
   
 
     Castle = 10,
-    Castle_Usual = 11,
     
     Whizzbang = 20,
     Whizzbang_Usual = 21,
