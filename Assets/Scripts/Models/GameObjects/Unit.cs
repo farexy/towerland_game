@@ -11,9 +11,6 @@ namespace Assets.Scripts.Models.GameObjects
       Type = GameObjectType.Unit;
     }
 
-    [JsonProperty("h")] public int Health { set; get; }
-    [JsonProperty("z")] public int? PathId { set; get; }
-
     public override object Clone()
     {
       return new Unit

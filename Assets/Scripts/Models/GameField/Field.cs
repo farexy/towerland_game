@@ -6,34 +6,23 @@ using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.GameField
 {
-   public class Field : ICloneable
+    public class Field : ICloneable
     {
-        public GameObjectLogical this[int gameId]
-        {
-            get { return _objects[gameId]; }
-        }
+        [JsonProperty("_id")] private int _objectId;
 
         [JsonProperty("sd")]
         public FieldStaticData StaticData { private set; get; }
 
         [JsonProperty("state")]
-        private FieldState _state;
-        [JsonIgnore]
-        public FieldState State
-        {
-            get
-            {
-                _state.Objects = _objects;
-                return _state;
-            }
-        }
+        public FieldState State { private set; get; }
 
         private Dictionary<int, GameObjectLogical> _objects;
 
         public Field()
         {
+            _objectId = 1;
             _objects = new Dictionary<int, GameObjectLogical>();
-            _state = new FieldState();
+            State = new FieldState();
         }
 
         public Field(FieldStaticData staticData) : this()
@@ -49,11 +38,26 @@ namespace Assets.Scripts.Models.GameField
             );
         }
 
+        public GameObjectLogical this[int gameId]
+        {
+            get { return !_objects.ContainsKey(gameId) ? null : _objects[gameId]; }
+        }
+
+
         public int AddGameObject(GameObjectLogical gameObj)
         {
+            var id = gameObj.GameId == default(int)
+                ? GenerateGameObjectId()
+                : gameObj.GameId;
+            return AddGameObject(id, gameObj);
+        }
+
+        private int AddGameObject(int gameId, GameObjectLogical gameObj)
+        {
             var type = gameObj.ResolveType();
-            var id = _objects.Count + gameObj.GetHashCode() - _objects.LastOrDefault().Key;
-            gameObj.GameId = id;
+            gameObj.GameId = gameId;
+
+            _objects.Add(gameId, gameObj);
 
             switch (type)
             {
@@ -70,9 +74,7 @@ namespace Assets.Scripts.Models.GameField
                     break;
             }
 
-            _objects.Add(id, gameObj);
-
-            return id;
+            return gameId;
         }
 
         public IEnumerable<int> AddMany(IEnumerable<GameObjectLogical> objects)
@@ -80,25 +82,32 @@ namespace Assets.Scripts.Models.GameField
             return objects.Select(AddGameObject);
         }
 
+        public int GenerateGameObjectId()
+        {
+            unchecked
+            {
+                return _objectId++;
+            }
+        }
+
         public void RemoveGameObject(int gameId)
         {
             if (!_objects.ContainsKey(gameId))
-                throw new ArgumentException("There is no object with spisified GameId on the field");
+                throw new ArgumentException("There is no object with specified GameId on the field");
 
             var gameObj = _objects[gameId];
             var type = gameObj.ResolveType();
 
-            if (GameObjectType.Castle == type)
+            switch (type)
             {
-                throw new ArgumentException("There can be only one castle");
-            }
-            if (type == GameObjectType.Unit)
-            {
-                State.Units.Remove(State.Units.First(u => u.GameId == gameId));
-            }
-            if (type == GameObjectType.Tower)
-            {
-                State.Towers.Remove(State.Towers.First(t => t.GameId == gameId));
+                case GameObjectType.Castle:
+                    throw new ArgumentException("There can be only one castle");
+                case GameObjectType.Unit:
+                    State.Units.Remove((Unit)gameObj);
+                    break;
+                case GameObjectType.Tower:
+                    State.Towers.Remove((Tower)gameObj);
+                    break;
             }
 
             _objects.Remove(gameId);
@@ -119,43 +128,28 @@ namespace Assets.Scripts.Models.GameField
 
         public void SetState(FieldState state)
         {
-            this._state = new FieldState(state.Towers, state.Units, state.Castle)
-            {
-                MonsterMoney = state.MonsterMoney,
-                TowerMoney = state.TowerMoney
-            };
-            this._objects = SetObjects(_state.Towers, _state.Units);
+            _objects = state.Units.Cast<GameObjectLogical>().Union(state.Towers.Cast<GameObjectLogical>()).ToDictionary(o => o.GameId);
+            this.State = new FieldState(_objects, state.Castle, state.TowerMoney, state.MonsterMoney);
+        }
+
+        public bool HasObject(int id)
+        {
+            return _objects.ContainsKey(id);
         }
 
         public object Clone()
         {
+            var clonedObjects = _objects.ToDictionary(item => item.Key, item => (GameObjectLogical) item.Value.Clone());
             return new Field
             {
                 StaticData = new FieldStaticData(StaticData.Cells, StaticData.Start, StaticData.Finish)
                 {
-                    Path = StaticData.Path
+                    Path = StaticData.Path,
+                    EndTimeUtc = StaticData.EndTimeUtc
                 },
-                _objects = _objects.ToDictionary(item => item.Key, item => (GameObjectLogical)item.Value.Clone()),
-                _state = new FieldState(State.Towers, State.Units, State.Castle)
-                {
-                    MonsterMoney = State.MonsterMoney,
-                    TowerMoney = State.TowerMoney
-                },
+                _objects = clonedObjects,
+                State = new FieldState(clonedObjects, State.Castle, State.TowerMoney, State.MonsterMoney)
             };
-        }
-        
-        private static Dictionary<int, GameObjectLogical> SetObjects(List<Tower> objects, List<Unit> objects1)
-        {
-            var res = new Dictionary<int, GameObjectLogical>();
-            foreach (var o in objects)
-            {
-                res.Add(o.GameId, o);
-            }
-            foreach (var o1 in objects1)
-            {
-                res.Add(o1.GameId, o1);
-            }
-            return res;
         }
     }
 }

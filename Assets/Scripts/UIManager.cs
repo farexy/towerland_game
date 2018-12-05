@@ -196,7 +196,7 @@ public class UIManager : MonoBehaviour
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Range: " + stats.Range;
 			_specialText.fontSize = 12;
-			_specialText.text = GetSpecialEffectText(stats.SpecialEffects);
+			_specialText.text = GetAbilityText(stats.Ability);
 		}
 		else
 		{
@@ -212,15 +212,15 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	private string GetSpecialEffectText(SpecialEffect specialEffect)
+	private string GetAbilityText(AbilityId abilityId)
 	{
-		if (specialEffect != null && specialEffect != SpecialEffect.Empty)
+		if (abilityId != AbilityId.None)
 		{
-			switch (specialEffect.Id)
+			switch (abilityId)
 			{
-					case EffectId.UnitFreezed:
-						return string.Format("Freezing monsters, duration: {0} ticks", specialEffect.Duration);
-					case EffectId.Unit10xDamage_10PercentProbability:
+					case AbilityId.Tower_FreezesUnit:
+						return string.Format("Freezing monsters");
+					case AbilityId.Tower_10xDamage_10PercentProbability:
 						return string.Format("10% possibility of 10x damage");
 			}
 		}

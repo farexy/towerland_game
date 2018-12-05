@@ -12,10 +12,24 @@ namespace Assets.Scripts.Models.GameObjects
     [JsonProperty("w")] public int WaitTicks { set; get; }
     [JsonProperty("e")] public SpecialEffect Effect { set; get; }
     [JsonProperty("t")] public GameObjectType Type { set; get; }
+    [JsonProperty("h")] public int Health { set; get; }
+    [JsonProperty("z")] public int? PathId { set; get; }
 
     protected GameObjectLogical()
     {
       Effect = SpecialEffect.Empty;
+    }
+
+    [JsonIgnore]
+    public bool IsTower
+    {
+      get { return ResolveType() == GameObjectType.Tower; }
+    }
+
+    [JsonIgnore]
+    public bool IsUnit
+    {
+      get { return ResolveType() == GameObjectType.Unit; }
     }
     
     public GameObjectType ResolveType()

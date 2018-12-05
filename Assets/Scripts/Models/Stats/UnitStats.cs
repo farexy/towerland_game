@@ -12,10 +12,9 @@ namespace Assets.Scripts.Models.Stats
     [JsonProperty("s")] public int Speed { set; get; } // ticks per cell
     [JsonProperty("m")] public MovementPriorityType MovementPriority { set; get; }
     [JsonProperty("a")] public bool IsAir { set; get; }
-    [JsonProperty("e")] public SpecialEffect SpecialEffects { set; get; }
+    [JsonProperty("e")] public AbilityId Ability { set; get; }
     [JsonProperty("c")] public int Cost { set; get; }
     [JsonProperty("f")] public DefenceType Defence { set; get; }
-    [JsonProperty("p")] public StrokePriority Priority { set; get; }
 
     public enum MovementPriorityType
     {

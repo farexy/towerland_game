@@ -5,7 +5,7 @@ namespace Assets.Scripts.Models.Stats
 {
   public class StatsFactory
   {
-    public UnitStats[] Units =
+    private UnitStats[] _units =
     {
       new UnitStats
       {
@@ -17,7 +17,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 2,
         Cost = 50,
         Defence = UnitStats.DefenceType.LightArmor,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -29,7 +28,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 4,
         Cost = 120,
         Defence = UnitStats.DefenceType.LightArmor,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -41,7 +39,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 6,
         Cost = 200,
         Defence = UnitStats.DefenceType.HeavyArmor,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -53,7 +50,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 3,
         Cost = 250,
         Defence = UnitStats.DefenceType.LightArmor,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -65,7 +61,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 3,
         Cost = 500,
         Defence = UnitStats.DefenceType.Undefended,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -77,7 +72,6 @@ namespace Assets.Scripts.Models.Stats
         Speed = 5,
         Cost = 750,
         Defence = UnitStats.DefenceType.HeavyArmor,
-        Priority = StrokePriority.Usual
       },
       new UnitStats
       {
@@ -89,12 +83,23 @@ namespace Assets.Scripts.Models.Stats
         Speed = 4,
         Cost = 500,
         Defence = UnitStats.DefenceType.Undefended,
-        SpecialEffects = new SpecialEffect {Id = EffectId.ReviveDeadUnitsAtThisTick},
-        Priority = StrokePriority.TheLowest
+        Ability= AbilityId.Unit_RevivesDeadUnit,
+      },
+      new UnitStats
+      {
+        Type = GameObjectType.Unit_Barbarian,
+        Damage = 15,
+        Health = 550,
+        IsAir = false,
+        MovementPriority = UnitStats.MovementPriorityType.Random,
+        Speed = 4,
+        Cost = 750,
+        Defence = UnitStats.DefenceType.LightArmor,
+        Ability= AbilityId.Unit_DestroysTowerOnDeath,
       }
     };
 
-    public TowerStats[] Towers =
+    private TowerStats[] _towers =
     {
       new TowerStats
       {
@@ -105,7 +110,7 @@ namespace Assets.Scripts.Models.Stats
         Damage = 60,
         Range = 3,
         Cost = 50,
-        Priority = StrokePriority.Usual
+        SpawnType = TowerStats.TowerSpawnType.Ground,
       },
       new TowerStats
       {
@@ -116,19 +121,19 @@ namespace Assets.Scripts.Models.Stats
         Damage = 35,
         Range = 4,
         Cost = 120,
-        SpecialEffects = new SpecialEffect {Id = EffectId.UnitFreezed, Duration = 16},
-        Priority = StrokePriority.Usual
+        Ability = AbilityId.Tower_FreezesUnit,
+        SpawnType = TowerStats.TowerSpawnType.Ground,
       },
       new TowerStats
       {
         Type = GameObjectType.Tower_Cannon,
-        TargetPriority = TowerStats.AttackPriority.Random,
+        TargetPriority = TowerStats.AttackPriority.UnitsAtPosition,
         Attack = TowerStats.AttackType.Burst,
         AttackSpeed = 12,
         Damage = 70,
         Range = 4,
         Cost = 200,
-        Priority = StrokePriority.Usual
+        SpawnType = TowerStats.TowerSpawnType.Ground,
       },
       new TowerStats
       {
@@ -139,7 +144,7 @@ namespace Assets.Scripts.Models.Stats
         Damage = 100,
         Range = 5,
         Cost = 400,
-        Priority = StrokePriority.Usual
+        SpawnType = TowerStats.TowerSpawnType.Ground,
       },
       new TowerStats
       {
@@ -150,12 +155,24 @@ namespace Assets.Scripts.Models.Stats
         Damage = 70,
         Range = 6,
         Cost = 600,
-        SpecialEffects = new SpecialEffect {Id = EffectId.Unit10xDamage_10PercentProbability},
-        Priority = StrokePriority.Usual
+        Ability = AbilityId.Tower_10xDamage_10PercentProbability,
+        SpawnType = TowerStats.TowerSpawnType.Ground,
+      },
+      new TowerStats
+      {
+        Type = GameObjectType.Tower_Poisoning,
+        TargetPriority = TowerStats.AttackPriority.Random,
+        Attack = TowerStats.AttackType.Magic,
+        AttackSpeed = 5,
+        Damage = 40,
+        Range = 3,
+        Cost = 500,
+        Ability = AbilityId.Tower_PoisonsUnit,
+        SpawnType = TowerStats.TowerSpawnType.Ground,
       }
     };
 
-    public DefenceCoeff[] DefenceCoeffs =
+    private DefenceCoeff[] _defenceCoeffs =
     {
       new DefenceCoeff
       {

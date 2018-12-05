@@ -149,7 +149,7 @@ public class FieldManager : MonoBehaviour
 		//delete unexisting
 		foreach (var gId in _gameObjects.Keys.ToArray())
 		{
-			if (!Field.State.Objects.ContainsKey(gId))
+			if (!Field.HasObject(gId))
 			{
 				Debug.Log("Garbage collected " + gId);
 				RemoveGameObject(gId);

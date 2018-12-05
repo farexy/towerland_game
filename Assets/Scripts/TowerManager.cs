@@ -28,7 +28,7 @@ public class TowerManager: MonoBehaviour
 	{
 		var stats = _statsLibrary.GetTowerStats(_fieldManager.GetGameObjectById(towerId).Type);
 		var attackType = stats.Attack;
-		var whizzbang = stats.SpecialEffects != null && stats.SpecialEffects.Id == EffectId.UnitFreezed
+		var whizzbang = stats.Ability != AbilityId.None && stats.Ability == AbilityId.Tower_FreezesUnit
 			? _pool.GetFromPool(GameObjectType.Whizzbang_Frost)
 			: attackType == TowerStats.AttackType.Magic
 				? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)

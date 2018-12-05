@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using Assets.Scripts.Models.GameObjects;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.GameField
 {
@@ -13,18 +14,19 @@ namespace Assets.Scripts.Models.GameField
             Units = new List<Unit>();
         }
 
-        public FieldState(IEnumerable<Tower> towers, IEnumerable<Unit> units, Castle castle)
+        public FieldState(Dictionary<int, GameObjectLogical> objects, Castle castle, int towerMoney, int monsterMoney)
         {
             Castle = (Castle)castle.Clone();
-            Towers = towers.Select(t => (Tower)t.Clone()).ToList();
-            Units = units.Select(u => (Unit)u.Clone()).ToList();
+            Towers = objects.Where(o => o.Value.IsTower).Select(o => o.Value).Cast<Tower>().ToList();
+            Units = objects.Where(o => o.Value.IsUnit).Select(o => o.Value).Cast<Unit>().ToList();
+            TowerMoney = towerMoney;
+            MonsterMoney = monsterMoney;
         }
-    
-        public Dictionary<int, GameObjectLogical> Objects { set; get; }
-        public List<Tower> Towers { private set; get; }
-        public List<Unit> Units { private set; get; }
+
         public Castle Castle { set; get; }
-    
+        public List<Tower> Towers { set; get; }
+        public List<Unit> Units { set; get; }
+
         public int MonsterMoney { set; get; }
         public int TowerMoney { set; get; }
     }

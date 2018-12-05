@@ -12,9 +12,9 @@ namespace Assets.Scripts.Models.Stats
     [JsonProperty("s")] public int AttackSpeed { set; get; }
     [JsonProperty("a")] public AttackType Attack { set; get; }
     [JsonProperty("tp")] public AttackPriority TargetPriority { set; get; }
-    [JsonProperty("e")] public SpecialEffect SpecialEffects { set; get; }
+    [JsonProperty("e")] public AbilityId Ability { set; get; }
     [JsonProperty("c")] public int Cost { set; get; }
-    [JsonProperty("p")] public StrokePriority Priority { set; get; }
+    [JsonProperty("p")] public TowerSpawnType SpawnType { set; get; }
 
     public enum AttackType
     {
@@ -22,11 +22,18 @@ namespace Assets.Scripts.Models.Stats
       Magic,
       Burst
     }
-    
+
     public enum AttackPriority
     {
       Random,
-      Optimal
+      Optimal,
+      UnitsAtPosition,
+    }
+
+    public enum TowerSpawnType
+    {
+      Ground = 1,
+      Tree = 2
     }
   }
 }

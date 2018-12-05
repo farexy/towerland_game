@@ -20,15 +20,17 @@
     Tower_Cannon = 103,
     Tower_FortressWatchtower = 104,
     Tower_Magic = 105,
+    Tower_Poisoning = 106,
 
     Unit = 1000,
     Unit_Skeleton = 1001,
     Unit_Impling = 1002,
-    Unit_Orc = 1003,
+    Unit_Orc= 1003,
     Unit_Goblin = 1004,
     Unit_Dragon = 1005,
     Unit_Golem = 1006,
     Unit_Necromancer = 1007,
+    Unit_Barbarian = 1008,
 
     // ReSharper restore InconsistentNaming
   }
