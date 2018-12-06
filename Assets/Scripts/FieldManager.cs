@@ -45,6 +45,7 @@ public class FieldManager : MonoBehaviour
 	public Field Field { get; private set; }
 	public int Width { get; private set; }
 	public int Height { get; private set; }
+	public HashSet<GameObjectType> AvailableObjects { get; private set; }
 
 	private Dictionary<int, GameObjectScript> _gameObjects;
 
@@ -62,6 +63,22 @@ public class FieldManager : MonoBehaviour
 		Side = LocalStorage.CurrentSide;
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
+		AvailableObjects = new HashSet<GameObjectType>
+		{
+			GameObjectType.Unit_Skeleton,
+			GameObjectType.Unit_Impling,
+			GameObjectType.Unit_Orc,
+			GameObjectType.Unit_Goblin,
+			GameObjectType.Unit_Dragon,
+			GameObjectType.Unit_Golem,
+			GameObjectType.Unit_Necromancer,
+
+			GameObjectType.Tower_Usual,
+			GameObjectType.Tower_Frost,
+			GameObjectType.Tower_Cannon,
+			GameObjectType.Tower_FortressWatchtower,
+			GameObjectType.Tower_Magic,
+		};
 
 		StartCoroutine(Init());
 		StartCoroutine(NetworkWorker());
@@ -179,6 +196,11 @@ public class FieldManager : MonoBehaviour
 		_gameObjects.Remove(id);
 		_pool.PutToPool(obj);
 	}
+	
+	public void RemoveGameObjectWithDelay(int id, float delaySec)
+	{
+		StartCoroutine(RemoveWithDelay(id, delaySec));
+	}
 
 	public void SwitchSide()
 	{
@@ -198,6 +220,12 @@ public class FieldManager : MonoBehaviour
 
 		//var clc = new StateCalculator(LocalStorage.StatsLibrary, Field);
 		//StartCoroutine(ResolveActions(clc.CalculateActionsByTicks()));
+	}
+
+	private IEnumerator RemoveWithDelay(int id, float delaySec)
+	{
+		yield return new WaitForSeconds(delaySec);
+		RemoveGameObject(id);
 	}
 
 	

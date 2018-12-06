@@ -20,7 +20,6 @@ namespace Assets.Scripts.Models.GameField
 
         public Field()
         {
-            _objectId = 1;
             _objects = new Dictionary<int, GameObjectLogical>();
             State = new FieldState();
         }
@@ -86,7 +85,7 @@ namespace Assets.Scripts.Models.GameField
         {
             unchecked
             {
-                return _objectId++;
+                return ++_objectId;
             }
         }
 
@@ -128,8 +127,8 @@ namespace Assets.Scripts.Models.GameField
 
         public void SetState(FieldState state)
         {
-            _objects = state.Units.Cast<GameObjectLogical>().Union(state.Towers.Cast<GameObjectLogical>()).ToDictionary(o => o.GameId);
-            this.State = new FieldState(_objects, state.Castle, state.TowerMoney, state.MonsterMoney);
+            _objects = state.Units.Cast<GameObjectLogical>().Union(state.Towers).ToDictionary(o => o.GameId);
+            this.State = new FieldState(_objects, state);
         }
 
         public bool HasObject(int id)
@@ -142,13 +141,14 @@ namespace Assets.Scripts.Models.GameField
             var clonedObjects = _objects.ToDictionary(item => item.Key, item => (GameObjectLogical) item.Value.Clone());
             return new Field
             {
+                _objectId = _objectId,
                 StaticData = new FieldStaticData(StaticData.Cells, StaticData.Start, StaticData.Finish)
                 {
                     Path = StaticData.Path,
                     EndTimeUtc = StaticData.EndTimeUtc
                 },
                 _objects = clonedObjects,
-                State = new FieldState(clonedObjects, State.Castle, State.TowerMoney, State.MonsterMoney)
+                State = new FieldState(clonedObjects, State)
             };
         }
     }

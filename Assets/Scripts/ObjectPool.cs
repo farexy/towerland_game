@@ -26,7 +26,7 @@ public class ObjectPool : MonoBehaviour
 				{
 					continue;
 				}
-				_gameObjectsPool.Add(gameObjName, gameObj.GetComponent<GameObjectScript>());			
+				_gameObjectsPool.Add(gameObjName, gameObj.GetComponent<GameObjectScript>());
 			}
 		}
 	}

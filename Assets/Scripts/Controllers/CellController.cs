@@ -50,4 +50,17 @@ public class CellController : MonoBehaviour
 			_renderer.material.color = _naturalColor;
 		}
 	}
+
+	public void SetActive()
+	{
+		_renderer.material.color = Color.gray;
+	}
+	
+	public void SetNonActive()
+	{
+		if (_renderer.material.color != _naturalColor)
+		{
+			_renderer.material.color = _naturalColor;
+		}
+	}
 }

@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameActions;
-using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.State;
 using Helpers;
 using UnityEngine;
@@ -27,24 +26,23 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.UnitMoves:
                     ManagersHelper.MonstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
                     break;
-                case ActionId.UnitMovesFreezed:
-                    ManagersHelper.MonstersManager.MoveUnit(action.UnitId, action.Position, EffectId.UnitFreezed);
-                    break;
                 case ActionId.UnitFreezes:
                     _fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.blue);
                     break;
                 case ActionId.UnitEffectCanseled:
                     _fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
                     break;
-                case ActionId.UnitDies:
-                    _fieldManager.RemoveGameObject(action.UnitId);
+                case ActionId.UnitDisappears:
+                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 0.5f);
                     break;
                 case ActionId.UnitAttacksCastle:
-                    //logic
-                    _fieldManager.RemoveGameObject(action.UnitId);
+                    // unit attack animation
                     break;
                 case ActionId.UnitAppears:
                     _fieldManager.RenderFieldState();
+                    break;
+                case ActionId.UnitAppliesEffect_DarkMagic:
+                    // unit animation
                     break;
             }
         }
@@ -60,7 +58,10 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.TowerAttacksPosition:
                     ManagersHelper.TowerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
                     break;
-            }      
+                case ActionId.TowerKills:
+                    // unit death animation
+                    break;
+            }
         }
 
         protected override void ResolveOtherAction(GameAction action)

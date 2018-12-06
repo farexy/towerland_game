@@ -14,13 +14,13 @@ namespace Assets.Scripts.Models.GameField
             Units = new List<Unit>();
         }
 
-        public FieldState(Dictionary<int, GameObjectLogical> objects, Castle castle, int towerMoney, int monsterMoney)
+        public FieldState(Dictionary<int, GameObjectLogical> objects, FieldState prevState)
         {
-            Castle = (Castle)castle.Clone();
+            Castle = (Castle)prevState.Castle.Clone();
             Towers = objects.Where(o => o.Value.IsTower).Select(o => o.Value).Cast<Tower>().ToList();
             Units = objects.Where(o => o.Value.IsUnit).Select(o => o.Value).Cast<Unit>().ToList();
-            TowerMoney = towerMoney;
-            MonsterMoney = monsterMoney;
+            TowerMoney = prevState.TowerMoney;
+            MonsterMoney = prevState.MonsterMoney;
         }
 
         public Castle Castle { set; get; }
@@ -29,5 +29,6 @@ namespace Assets.Scripts.Models.GameField
 
         public int MonsterMoney { set; get; }
         public int TowerMoney { set; get; }
+
     }
 }

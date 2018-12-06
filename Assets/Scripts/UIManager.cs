@@ -53,11 +53,9 @@ public class UIManager : MonoBehaviour
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = LocalStorage.StatsLibrary;
 		_texturesCache = new Dictionary<GameObjectType, Texture2D>();
-		_monsterTypes = Enum.GetValues(typeof(GameObjectType))
-			.Cast<GameObjectType>()
+		_monsterTypes = _fieldManager.AvailableObjects
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
-		_towerTypes = Enum.GetValues(typeof(GameObjectType))
-			.Cast<GameObjectType>()
+		_towerTypes = _fieldManager.AvailableObjects
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Tower && t != GameObjectType.Tower);
 	}
 	
