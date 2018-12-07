@@ -11,6 +11,6 @@ namespace Helpers
       _offset = DateTime.UtcNow - serverTime;
     }
 
-    public static DateTime Now => DateTime.Now - _offset;
+    public static DateTime Now => DateTime.UtcNow + _offset;
   }
 }
