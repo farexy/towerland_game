@@ -126,7 +126,7 @@ public class UIManager : MonoBehaviour
 			}
 			GUI.Box(new Rect(Screen.width - Width - 10, Y, Width + 10, NormalHeight), new GUIContent(string.Format("{0}/{1}", _fieldManager.Field.State.Castle.Health, "100"), _castleImg));
 			
-			var lastTime = _fieldManager.Field.StaticData.EndTimeUtc - DateTime.UtcNow;
+			var lastTime = _fieldManager.Field.StaticData.EndTimeUtc - ServerTime.Now;
 			if (lastTime < TimeSpan.FromMinutes(5))
 			{
 				GUI.contentColor = _side.IsMonsters() ? Color.red : Color.green;

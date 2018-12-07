@@ -60,15 +60,49 @@ public class MonsterController : MonoBehaviour
 
 	private void SetCurDir(Direction dir)
 	{
-		if ((dir == Direction.Down || dir == Direction.Up) && (_curDir == Direction.Left || _curDir == Direction.Right)
-		    || (dir == Direction.Left || dir == Direction.Right) && (_curDir == Direction.Up || _curDir == Direction.Down))
+		if (_curDir == Direction.Down && dir == Direction.Right)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
+		}
+		if (_curDir == Direction.Down && dir == Direction.Left)
 		{
 			GetComponentInChildren<ProgressBarController>()
 				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
 		}
+		if (_curDir == Direction.Up && dir == Direction.Right)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
+		}
+		if (_curDir == Direction.Up && dir == Direction.Left)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
+		}
+		if (_curDir == Direction.Right && dir == Direction.Down)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
+		}
+		if (_curDir == Direction.Right && dir == Direction.Up)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
+		}
+		if (_curDir == Direction.Left && dir == Direction.Up)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
+		}
+		if (_curDir == Direction.Left && dir == Direction.Down)
+		{
+			GetComponentInChildren<ProgressBarController>()
+				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
+		}
 		_curDir = dir;
 	}
-	
+
 	private enum Direction
 	{
 		Down, Left, Up, Right

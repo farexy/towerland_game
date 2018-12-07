@@ -61,9 +61,9 @@
             get { return Server + "/user/exp"; }
         }
 
-        public static string StatsDataUrl
+        public static string StaticDataUrl
         {
-            get { return Server + "/data/stats"; }
+            get { return Server + "/data/static"; }
         }
     }
 }

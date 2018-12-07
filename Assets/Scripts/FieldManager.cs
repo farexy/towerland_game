@@ -2,16 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Assets.Scripts.Models;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
-using Assets.Scripts.Models.Interfaces;
 using Assets.Scripts.Models.Resolvers;
 using Assets.Scripts.Models.State;
-using Assets.Scripts.Models.Stats;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
 using Helpers;
@@ -36,6 +31,7 @@ public class FieldManager : MonoBehaviour
 	private string _session;
 	private ObjectPool _pool;
 	private int _tickCount;
+	private bool _isEnding;
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
 	
 	public GameObjectType Selected { get; set; }
@@ -164,14 +160,14 @@ public class FieldManager : MonoBehaviour
 		}
 		
 		//delete unexisting
-		foreach (var gId in _gameObjects.Keys.ToArray())
-		{
-			if (!Field.HasObject(gId))
-			{
-				Debug.Log("Garbage collected " + gId);
-				RemoveGameObject(gId);
-			}
-		}
+//		foreach (var gId in _gameObjects.Keys.ToArray())
+//		{
+//			if (!Field.HasObject(gId))
+//			{
+//				Debug.Log("Garbage collected " + gId);
+//				RemoveGameObject(gId);
+//			}
+//		}
 	}
 
 	public GameObjectScript GetGameObjectById(int id)
@@ -228,7 +224,6 @@ public class FieldManager : MonoBehaviour
 		RemoveGameObject(id);
 	}
 
-	
 	private IEnumerator PostCommand(GameObjectType type, Point? position, string cheat = null)
 	{
 		var command = new StateChangeCommandRequestModel
@@ -256,7 +251,7 @@ public class FieldManager : MonoBehaviour
 				yield return null;
 				continue;
 			}
-			if (Field.StaticData.EndTimeUtc < DateTime.UtcNow)
+			if (Field.StaticData.EndTimeUtc < ServerTime.Now)
 			{
 				yield return TryPostEnd();
 			}
@@ -315,15 +310,23 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator TryPostEnd()
 	{
-		var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-		yield return www.Request.Send();
+		if (!_isEnding)
+		{
+			_isEnding = true;
+			var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+			yield return www.Request.Send();
+		}
 	}
 	
 	private IEnumerator PostEnd(PlayerSide winner)
 	{
-		var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-		yield return www.Request.Send();
-		StartCoroutine(Leave(winner));
+		if (!_isEnding)
+		{
+			_isEnding = true;
+			var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
+			yield return www.Request.Send();
+			StartCoroutine(Leave(winner));
+		}
 	}
 	
 	private IEnumerator Leave(PlayerSide playerSide)
@@ -335,7 +338,7 @@ public class FieldManager : MonoBehaviour
 
 	public void End(PlayerSide winner)
 	{
-		StartCoroutine(PostEnd(winner));
+		StartCoroutine(Leave(winner));
 	}
 
 	private IEnumerator Init()

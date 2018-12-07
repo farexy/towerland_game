@@ -116,7 +116,7 @@ public class StartMenuController : MonoBehaviour
 
 	private IEnumerator GetStaticData(string session)
 	{
-		var www = new HttpRequest(ConfigurationManager.StatsDataUrl, session).Request;
+		var www = new HttpRequest(ConfigurationManager.StaticDataUrl, session).Request;
 		yield return www.Send();
 //		if (ConfigurationManager.Debug)
 //		{
@@ -125,8 +125,9 @@ public class StartMenuController : MonoBehaviour
 //			_initializing = false;
 //			yield break;
 //		}
-		var resp = JsonConvert.DeserializeObject<StatsResponseModel>(www.downloadHandler.text);
-		LocalStorage.StatsLibrary = new StatsLibrary(resp.UnitStats, resp.TowerStats, resp.DefenceCoeffs);
+		var resp = JsonConvert.DeserializeObject<StaticDataResponseModel>(www.downloadHandler.text);
+		LocalStorage.StatsLibrary = new StatsLibrary(resp.Stats.UnitStats, resp.Stats.TowerStats, resp.Stats.DefenceCoeffs);
+		ServerTime.Init(resp.ServerTime);
 		_initializing = false;
 	}
 	
