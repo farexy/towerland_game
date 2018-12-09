@@ -78,7 +78,7 @@ namespace Assets.Scripts.Models.Resolvers
                     Task.Run(async () =>
                     {
                         await Task.Delay(500);
-                        _field.RemoveGameObject(action.UnitId);
+                        _field.RemoveGameObject(action.TowerId);
                     });
                     break;
             }

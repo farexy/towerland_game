@@ -61,6 +61,9 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.TowerKills:
                     // unit death animation
                     break;
+                case ActionId.TowerCollapses:
+                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 0.5f);
+                    break;
             }
         }
 

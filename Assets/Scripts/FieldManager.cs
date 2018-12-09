@@ -62,7 +62,7 @@ public class FieldManager : MonoBehaviour
 		AvailableObjects = new HashSet<GameObjectType>
 		{
 			GameObjectType.Unit_Skeleton,
-			GameObjectType.Unit_Impling,
+			GameObjectType.Unit_BarbarianMage,
 			GameObjectType.Unit_Orc,
 			GameObjectType.Unit_Goblin,
 			GameObjectType.Unit_Dragon,
@@ -74,6 +74,7 @@ public class FieldManager : MonoBehaviour
 			GameObjectType.Tower_Cannon,
 			GameObjectType.Tower_FortressWatchtower,
 			GameObjectType.Tower_Magic,
+			GameObjectType.Tower_Poisoning,
 		};
 
 		StartCoroutine(Init());

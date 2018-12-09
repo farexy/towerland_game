@@ -87,7 +87,7 @@ namespace Assets.Scripts.Models.Stats
       },
       new UnitStats
       {
-        Type = GameObjectType.Unit_Barbarian,
+        Type = GameObjectType.Unit_BarbarianMage,
         Damage = 15,
         Health = 550,
         IsAir = false,

@@ -30,9 +30,11 @@ public class TowerManager: MonoBehaviour
 		var attackType = stats.Attack;
 		var whizzbang = stats.Ability != AbilityId.None && stats.Ability == AbilityId.Tower_FreezesUnit
 			? _pool.GetFromPool(GameObjectType.Whizzbang_Frost)
-			: attackType == TowerStats.AttackType.Magic
-				? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
-				: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
+			: stats.Ability != AbilityId.None && stats.Ability == AbilityId.Tower_PoisonsUnit
+				? _pool.GetFromPool(GameObjectType.Whizzbang_Poison)
+				: attackType == TowerStats.AttackType.Magic
+					? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
+					: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
 
 		try
 		{
