@@ -8,7 +8,7 @@ using UnityEngine;
 public class MonstersManager : MonoBehaviour
 {
 	private const int Up = 30;
-	private const int Width = 70; 
+	private const int Width = 70;
 	private const int Height = 40;
 	private const float FixedUpdate = 0.02f;
 	
@@ -19,7 +19,6 @@ public class MonstersManager : MonoBehaviour
 	{
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = LocalStorage.StatsLibrary;
-		
 	}
 
 	private void OnGUI()
@@ -38,17 +37,24 @@ public class MonstersManager : MonoBehaviour
 					continue;
 				}
 				var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
-				var helthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
+				var healthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
 				GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
 				GUI.backgroundColor = Color.clear;
 				var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
-				GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), helthIndicator);
+				if (unit.Effect != null && unit.Effect.Id != EffectId.None)
+				{
+					var effectImg = _fieldManager.Resources.LoadTexture(unit.Effect.Id.ToString());
+					GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), new GUIContent(healthIndicator, effectImg));
+				}
+				else
+				{
+					GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), healthIndicator);
+				}
 
 				var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
 				if (healthBar != null)
 				{
 					healthBar.SetProgressRate((float) unit.Health / statsHealth);
-					//healthBar.transform.parent.rotation = new Quaternion();
 				}
 			}
 		}catch(InvalidOperationException){}

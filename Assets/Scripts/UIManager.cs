@@ -24,7 +24,6 @@ public class UIManager : MonoBehaviour
 	private const int SmallHeight = 20;
 	private const int NormalHeight = 40;
 
-	private Dictionary<GameObjectType, Texture2D> _texturesCache;
 	private IEnumerable<GameObjectType> _monsterTypes;
 	private IEnumerable<GameObjectType> _towerTypes;
 	private FieldManager _fieldManager;
@@ -52,7 +51,6 @@ public class UIManager : MonoBehaviour
 		_castleImg = Resources.Load<Texture2D>("castle");
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = LocalStorage.StatsLibrary;
-		_texturesCache = new Dictionary<GameObjectType, Texture2D>();
 		_monsterTypes = _fieldManager.AvailableObjects
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
 		_towerTypes = _fieldManager.AvailableObjects
@@ -75,7 +73,7 @@ public class UIManager : MonoBehaviour
 			var x = 0;
 			foreach (var t in playerSideTypes)
 			{
-				GUI.Box(new Rect(StartX + x, Y, Width, Height), GetGameObjectImage(t));
+				GUI.Box(new Rect(StartX + x, Y, Width, Height), _fieldManager.Resources.LoadTexture(t.ToString()));
 				
 				var cost = _side.IsTowers()
 					? _statsLibrary.GetTowerStats(t).Cost
@@ -172,7 +170,7 @@ public class UIManager : MonoBehaviour
 
 	private void LoadDetailsIcon()
 	{
-		var texture = GetGameObjectImage(_fieldManager.Selected);
+		var texture = _fieldManager.Resources.LoadTexture(_fieldManager.Selected.ToString());
 		_iconImg.overrideSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
 	}
 	
@@ -230,16 +228,6 @@ public class UIManager : MonoBehaviour
 		return GameObjectLogical.ResolveType(type) == GameObjectType.Unit || GameObjectType.Tower_FortressWatchtower == type
 		? type.ToString().Split('_')[1]
 		: type.ToString().Replace('_', ' ');
-	}
-	
-	private Texture2D GetGameObjectImage(GameObjectType type)
-	{
-		if (_texturesCache.ContainsKey(type))
-		{
-			return _texturesCache[type];
-		}
-		
-		return _texturesCache[type] = Resources.Load<Texture2D>(type.ToString());
 	}
 
 	private int PlayerMoney()

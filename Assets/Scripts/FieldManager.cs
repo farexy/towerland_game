@@ -35,6 +35,7 @@ public class FieldManager : MonoBehaviour
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
 	
 	public GameObjectType Selected { get; set; }
+	public ResourcesCache Resources { get; set; }
 	
 	public PlayerSide Winner { get; set; }
 	public PlayerSide Side { get; set; }
@@ -59,6 +60,7 @@ public class FieldManager : MonoBehaviour
 		Side = LocalStorage.CurrentSide;
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
+		Resources = new ResourcesCache();
 		AvailableObjects = new HashSet<GameObjectType>
 		{
 			GameObjectType.Unit_Skeleton,
