@@ -5,6 +5,7 @@ using System.Linq;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
+using Assets.Scripts.Models.Interfaces;
 using Assets.Scripts.Models.Resolvers;
 using Assets.Scripts.Models.State;
 using Assets.Scripts.Network;
@@ -18,7 +19,7 @@ using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
 public class FieldManager : MonoBehaviour
 {
 	public const float TickSecond = 0.4f;
-	private readonly Quaternion Quaternion = UnityEngine.Quaternion.Euler(90, 90, 270);
+	private readonly Quaternion Quaternion = Quaternion.Euler(90, 90, 270);
 	
 	public GameObject Ground;
 	public GameObject Road;
@@ -32,6 +33,7 @@ public class FieldManager : MonoBehaviour
 	private ObjectPool _pool;
 	private int _tickCount;
 	private bool _isEnding;
+	private IStatsLibrary _statsLibrary;
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
 	
 	public GameObjectType Selected { get; set; }
@@ -43,6 +45,8 @@ public class FieldManager : MonoBehaviour
 	public int Width { get; private set; }
 	public int Height { get; private set; }
 	public HashSet<GameObjectType> AvailableObjects { get; private set; }
+	
+	public int PlayerMoney =>  Side.IsMonsters() ? Field.State.MonsterMoney : Field.State.TowerMoney;
 
 	private Dictionary<int, GameObjectScript> _gameObjects;
 
@@ -58,6 +62,7 @@ public class FieldManager : MonoBehaviour
 		_battleId = LocalStorage.CurrentBattleId;
 		_session = LocalStorage.Session;
 		Side = LocalStorage.CurrentSide;
+		_statsLibrary = LocalStorage.StatsLibrary;
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
 		Resources = new ResourcesCache();
@@ -99,23 +104,23 @@ public class FieldManager : MonoBehaviour
 					GameObject tmp;
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Entrance)
 					{
-						tmp = Instantiate(Entrance, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
+						tmp = Instantiate(Entrance, CoordinationHelper.GetViewPoint(point), Quaternion);
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Road)
 					{
-						tmp = Instantiate(Road, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
+						tmp = Instantiate(Road, CoordinationHelper.GetViewPoint(point), Quaternion);
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Ground)
 					{
-						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
+						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion);
 						tmp.GetComponent<CellController>().Point = new Point(i, j);
 						tmp.transform.parent = transform;
 					}
 					if (Field.StaticData.Cells[i, j].Object == FieldObject.Castle)
 					{
-						tmp = Instantiate(Castle, CoordinationHelper.GetViewPoint(point), Quaternion) as GameObject;
+						tmp = Instantiate(Castle, CoordinationHelper.GetViewPoint(point), Quaternion);
 						tmp.transform.parent = transform;
 					}
 				}
@@ -209,6 +214,10 @@ public class FieldManager : MonoBehaviour
 	
 	public void Command(Point? position = null)
 	{
+		if (PlayerMoney - _statsLibrary.GetStats(Selected).Cost < 0)
+		{
+			return;
+		}
 		StartCoroutine(PostCommand(Selected, position));
 	}
 	

@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
 					? _statsLibrary.GetTowerStats(t).Cost
 					: _statsLibrary.GetUnitStats(t).Cost;
 
-				bool notEnoughMoney = PlayerMoney() < cost;
+				bool notEnoughMoney = _fieldManager.PlayerMoney < cost;
 				GUI.backgroundColor = notEnoughMoney 
 					? Color.black
 					:selected == t ? Color.red : Color.clear;
@@ -103,7 +103,7 @@ public class UIManager : MonoBehaviour
 				GUI.Box(new Rect(StartX + x, Y + Height, Width, SmallHeight), new GUIContent(cost.ToString()));
 				x += Width;
 			}
-			GUI.Box(new Rect(StartX + x, Y, Width, NormalHeight), new GUIContent(PlayerMoney().ToString(), _coinImg));
+			GUI.Box(new Rect(StartX + x, Y, Width, NormalHeight), new GUIContent(_fieldManager.PlayerMoney.ToString(), _coinImg));
 			
 			GUI.backgroundColor = Color.blue;
 			if(_side.IsMonsters() && _fieldManager.Selected != GameObjectType.Undefined 
@@ -228,14 +228,5 @@ public class UIManager : MonoBehaviour
 		return GameObjectLogical.ResolveType(type) == GameObjectType.Unit || GameObjectType.Tower_FortressWatchtower == type
 		? type.ToString().Split('_')[1]
 		: type.ToString().Replace('_', ' ');
-	}
-
-	private int PlayerMoney()
-	{
-		var money = _side.IsMonsters()
-			? _fieldManager.Field.State.MonsterMoney
-			: _fieldManager.Field.State.TowerMoney;
-
-		return money;
 	}
 }

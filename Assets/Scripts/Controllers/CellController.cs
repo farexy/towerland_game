@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.State;
@@ -27,7 +25,7 @@ public class CellController : MonoBehaviour
 	private void OnMouseDown()
 	{
 		//Debug.Log("X:" + Point + " Y:" + Point);
-		if (GameObjectLogical.ResolveType(_manager.Selected) == GameObjectType.Tower)
+		if (GameObjectLogical.ResolveType(_manager.Selected) == GameObjectType.Tower && IsAvailableForTower())
 		{
 			_manager.Command(Point);
 			_manager.Selected = GameObjectType.Undefined;
@@ -38,8 +36,7 @@ public class CellController : MonoBehaviour
 	{
 		if (_manager.Selected != GameObjectType.Undefined && _manager.Side == PlayerSide.Towers)
 		{
-			_renderer.material.color = Object == FieldObject.Ground || _manager.Field.State.Towers.All(t => t.Position != Point)
-				? Color.gray : Color.red;
+			_renderer.material.color = IsAvailableForTower() ? Color.gray : Color.red;
 		}
 	}
 
@@ -62,5 +59,10 @@ public class CellController : MonoBehaviour
 		{
 			_renderer.material.color = _naturalColor;
 		}
+	}
+
+	private bool IsAvailableForTower()
+	{
+		return Object == FieldObject.Ground && _manager.Field.State.Towers.All(t => t.Position != Point);
 	}
 }

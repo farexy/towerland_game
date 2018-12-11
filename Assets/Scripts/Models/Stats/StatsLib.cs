@@ -18,7 +18,12 @@ namespace Assets.Scripts.Models.Stats
                 .ToDictionary(el => el.Type, el => el);
             _deffCoeffs = defenceCoeffs;
         }
-    
+
+        public IStats GetStats(GameObjectType type)
+        {
+            return _objects[type];
+        }
+        
         public UnitStats GetUnitStats(GameObjectType type)
         {
             return (UnitStats) _objects[type];
