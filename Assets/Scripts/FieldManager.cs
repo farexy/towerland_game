@@ -269,9 +269,9 @@ public class FieldManager : MonoBehaviour
 			}
 			var www = _gameProcessNetworkWorker.GetCheckBattleStateChange(_battleId, _revision);
 			yield return www.Send();
-			if (!string.IsNullOrEmpty(www.downloadHandler.text))
+			if (!string.IsNullOrEmpty(www.ResponseString))
 			{
-				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.downloadHandler.text);
+				var ticks = JsonConvert.DeserializeObject<ActionsResponseModel>(www.ResponseString);
 				_revision = ticks.Revision;
 				Field.SetState(ticks.State);
 				if (_resolver != null)
@@ -326,7 +326,7 @@ public class FieldManager : MonoBehaviour
 		{
 			_isEnding = true;
 			var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-			yield return www.Request.Send();
+			yield return www.Send();
 		}
 	}
 	
@@ -336,7 +336,7 @@ public class FieldManager : MonoBehaviour
 		{
 			_isEnding = true;
 			var www = new HttpRequest(string.Format(ConfigurationManager.TryEndUrl, _battleId), _session);
-			yield return www.Request.Send();
+			yield return www.Send();
 			StartCoroutine(Leave(winner));
 		}
 	}
@@ -355,9 +355,9 @@ public class FieldManager : MonoBehaviour
 
 	private IEnumerator Init()
 	{
-		var httpRequest = new HttpRequest(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session).Request;
+		var httpRequest = new HttpRequest(string.Format(ConfigurationManager.InitFieldUrl, _battleId), _session);
 		yield return httpRequest.Send();
-		Field = JsonConvert.DeserializeObject<Field>(httpRequest.downloadHandler.text);
+		Field = JsonConvert.DeserializeObject<Field>(httpRequest.ResponseString);
 		
 		_stateResolver = new FieldStateActionResolver(Field);
 		_viewResolver = new ViewActionResolver(this);

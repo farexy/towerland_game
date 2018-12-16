@@ -8,7 +8,12 @@
 
         public static string SearchBattleUrl
         {
-            get { return Server + "/battlesearch/search/"; }
+            get { return Server + "/battlesearch/"; }
+        }
+        
+        public static string SearchMultiBattleUrl
+        {
+            get { return Server + "/battlesearch/multibattle/"; }
         }
 
         public static string CheckSearchBattleUrl

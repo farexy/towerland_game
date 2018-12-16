@@ -12,21 +12,16 @@ public class StartMenuController : MonoBehaviour
 {
 	public GameObject MainMenu;
 	public GameObject RatingTable;
+	public GameObject BattleSelector;
 
 	public Text LevelText;
 	public Text ExperienceText;
 	public GameObject Progress;
 	
-	private bool _searchForBattle;
 	private bool _initializing;
 	private const int Width = 200;
 	private const int Height = 100;
-	
-	// Use this for initialization
-	void Start ()
-	{
-		_searchForBattle = false;
-	}
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -41,18 +36,12 @@ public class StartMenuController : MonoBehaviour
 			GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width, Height), "Loading");
 			GUI.skin.box.fontSize = 14;
 		}
-		if (_searchForBattle)
-		{
-			//var defaultSize = GUI.skin.box.fontSize;
-			GUI.skin.box.fontSize = 24;
-			GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width, Height), "Search for battle");
-			GUI.skin.box.fontSize = 14;
-		}
 	}
 
-	public void OnStartButtonClick()
+	public void OnStartBattleClick()
 	{
-		StartCoroutine(FindBattle());
+		BattleSelector.SetActive(true);
+		MainMenu.SetActive(false);
 	}
 	
 	public void OnRatingButtonClick()
@@ -60,34 +49,7 @@ public class StartMenuController : MonoBehaviour
 		RatingTable.SetActive(true);
 		MainMenu.SetActive(false);
 	}
-
-	private IEnumerator FindBattle()
-	{
-		_searchForBattle = true;
-		var www = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.Session).Request;
-		yield return www.Send();
-		if (ConfigurationManager.Debug)
-		{
-			var www1 = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession).Request;
-			yield return www1.Send();
-		}
-		var resp = new BattleSearchCheckResponseModel();
-		while (!resp.Found)
-		{
-			var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session).Request;
-			yield return www2.Send();
-			resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.downloadHandler.text);
-		}
-		if (ConfigurationManager.Debug)
-		{
-			var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession).Request;
-			yield return www3.Send();
-		}
-		LocalStorage.CurrentBattleId = resp.BattleId;
-		LocalStorage.CurrentSide = resp.Side;
-		SceneManager.LoadScene("battle");
-	}
-
+	
 	private void ShowExp(UserExperience exp)
 	{
 		LevelText.text = "Level: " + exp.Level;
@@ -109,14 +71,14 @@ public class StartMenuController : MonoBehaviour
 	
 	private IEnumerator GetExperience(string session)
 	{
-		var www = new HttpRequest(ConfigurationManager.UserExpUrl, session).Request;
+		var www = new HttpRequest(ConfigurationManager.UserExpUrl, session);
 		yield return www.Send();
-		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.downloadHandler.text));
+		ShowExp(JsonConvert.DeserializeObject<UserExperience>(www.ResponseString));
 	}
 
 	private IEnumerator GetStaticData(string session)
 	{
-		var www = new HttpRequest(ConfigurationManager.StaticDataUrl, session).Request;
+		var www = new HttpRequest(ConfigurationManager.StaticDataUrl, session);
 		yield return www.Send();
 //		if (ConfigurationManager.Debug)
 //		{
@@ -125,9 +87,10 @@ public class StartMenuController : MonoBehaviour
 //			_initializing = false;
 //			yield break;
 //		}
-		var resp = JsonConvert.DeserializeObject<StaticDataResponseModel>(www.downloadHandler.text);
+		var resp = JsonConvert.DeserializeObject<StaticDataResponseModel>(www.ResponseString);
 		LocalStorage.StatsLibrary = new StatsLibrary(resp.Stats.UnitStats, resp.Stats.TowerStats, resp.Stats.DefenceCoeffs);
 		ServerTime.Init(resp.ServerTime);
+		ComputerPlayer.Init(resp.ComputerPlayerSessionKey);
 		_initializing = false;
 	}
 	

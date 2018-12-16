@@ -79,9 +79,9 @@ public class LoginController : MonoBehaviour
 		var requestModel = new SignInRequestModel {Email = login, Password = password};
 		var postData = JsonConvert.SerializeObject(requestModel);
 		
-		var www = new HttpRequest(ConfigurationManager.LoginUserUrl, postData, null).Request;
+		var www = new HttpRequest(ConfigurationManager.LoginUserUrl, postData, null);
 		yield return www.Send();
-		string session = www.downloadHandler.text.Replace("\"", string.Empty);
+		string session = www.ResponseString.Replace("\"", string.Empty);
 		if (session != string.Empty)
 		{
 			LocalStorage.Session = session;

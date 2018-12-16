@@ -1,0 +1,107 @@
+using System.Collections;
+using Assets.Scripts.Network;
+using Assets.Scripts.Network.Models;
+using Helpers;
+using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Controllers
+{
+    public class BattleSelectorController : MonoBehaviour
+    {
+        public GameObject MainMenu;
+
+        private bool _searchForBattle;
+        
+        private const int Width = 200;
+        private const int Height = 100;
+        
+        // Use this for initialization
+        void Start ()
+        {
+            _searchForBattle = false;
+        }
+
+        private void OnGUI()
+        {
+            if (_searchForBattle)
+            {
+                //var defaultSize = GUI.skin.box.fontSize;
+                GUI.skin.box.fontSize = 24;
+                GUI.Box(new Rect(Screen.width / 2 - Width / 2, Screen.height / 2 - Height / 2, Width, Height), "Search for battle");
+                GUI.skin.box.fontSize = 14;
+            }
+        }
+
+        public void OnPvPButtonClick()
+        {
+            StartCoroutine(FindBattle());
+        }
+	
+        public void OnPvEButtonClick()
+        {
+            StartCoroutine(FindMultiBattle());
+        }
+
+        public void OnBackButton()
+        {
+            MainMenu.SetActive(true);
+            gameObject.SetActive(false);
+        }
+        
+        private IEnumerator FindBattle()
+        {
+            _searchForBattle = true;
+            var www = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.Session);
+            yield return www.Send();
+            if (ConfigurationManager.Debug)
+            {
+                var www1 = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession);
+                yield return www1.Send();
+            }
+            var resp = new BattleSearchCheckResponseModel();
+            while (!resp.Found)
+            {
+                yield return new WaitForFixedUpdate();
+                var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
+                yield return www2.Send();
+                resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.ResponseString);
+            }
+            if (ConfigurationManager.Debug)
+            {
+                var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession);
+                yield return www3.Send();
+            }
+            LocalStorage.CurrentBattleId = resp.BattleId;
+            LocalStorage.CurrentSide = resp.Side;
+            SceneManager.LoadScene("battle");
+        }
+
+        private IEnumerator FindMultiBattle()
+        {
+            _searchForBattle = true;
+            var www = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, LocalStorage.Session);
+            yield return www.Send();
+
+            var www1 = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, ComputerPlayer.SessionKey);
+            yield return www1.Send();
+		
+            var resp = new BattleSearchCheckResponseModel();
+            while (!resp.Found)
+            {
+                yield return new WaitForFixedUpdate();
+                var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
+                yield return www2.Send();
+                resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.ResponseString);
+            }
+
+            var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, ComputerPlayer.SessionKey);
+            yield return www3.Send();
+		
+            LocalStorage.CurrentBattleId = resp.BattleId;
+            LocalStorage.CurrentSide = resp.Side;
+            SceneManager.LoadScene("battle");
+        }
+    }
+}
