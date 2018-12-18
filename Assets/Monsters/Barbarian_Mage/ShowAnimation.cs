@@ -69,6 +69,7 @@ public class ShowAnimation : MonoBehaviour {
 		ain = AinObjs [i].GetComponent<Animation>();
 		clips = AnimationUtility.GetAnimationClips(ain);
 	}
+	
 	void PlayAnim ()
 	{
 		AinObjs [i].GetComponent<Animation>().Play (clips [CurAnimClip].name);

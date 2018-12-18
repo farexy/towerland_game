@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.Effects;
+﻿using Assets.Scripts.Models.Client;
+using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.State;
 using Helpers;
@@ -27,16 +28,16 @@ namespace Assets.Scripts.Models.Resolvers
                     ManagersHelper.MonstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
                     break;
                 case ActionId.UnitFreezes:
-                    _fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.blue);
+                    //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.blue);
                     break;
                 case ActionId.UnitEffectCanseled:
-                    _fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
+                    //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
                     break;
                 case ActionId.UnitDisappears:
-                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 0.5f);
+                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, FieldManager.TickSecond * 3);
                     break;
                 case ActionId.UnitAttacksCastle:
-                    // unit attack animation
+                    ManagersHelper.MonstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Attack);
                     break;
                 case ActionId.UnitAppears:
                     _fieldManager.RenderFieldState();
@@ -59,10 +60,10 @@ namespace Assets.Scripts.Models.Resolvers
                     ManagersHelper.TowerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
                     break;
                 case ActionId.TowerKills:
-                    // unit death animation
+                    ManagersHelper.MonstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
                     break;
                 case ActionId.TowerCollapses:
-                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 0.5f);
+                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, FieldManager.TickSecond);
                     break;
             }
         }

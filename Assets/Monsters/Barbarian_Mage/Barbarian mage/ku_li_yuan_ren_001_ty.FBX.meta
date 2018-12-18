@@ -241,13 +241,13 @@ ModelImporter:
     4300002: fa_she_dao_ju_001_ty
     4300004: ku_li_yuan_ren_001_ty
     4300006: ku_li_yuan_ren_wq_001_ty
-    7400000: walk
+    7400000: run
     7400002: free
     7400004: idle
     7400006: attack
     7400008: skill
     7400010: skill2
-    7400012: death
+    7400012: die
     7400014: push
     7400016: Take 0017
     7400018: shouji
@@ -257,7 +257,17 @@ ModelImporter:
     13700002: ku_li_yuan_ren_001_ty1
     13700004: ku_li_yuan_ren_001_ty
     13700006: ku_li_yuan_ren_wq_001_ty
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #25'
+    second: {fileID: 2100000, guid: e9e8cc8d2d8447140bf932806bdc6d1a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 'Material #26'
+    second: {fileID: 2100000, guid: e9e8cc8d2d8447140bf932806bdc6d1a, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -286,7 +296,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: walk
+      name: run
       takeName: Take 001
       firstFrame: 0
       lastFrame: 30
@@ -894,7 +904,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: death
+      name: die
       takeName: Take 001
       firstFrame: 220
       lastFrame: 270

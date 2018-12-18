@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.Interfaces;
@@ -64,10 +65,14 @@ public class MonstersManager : MonoBehaviour
 	{
 		var  obj = _fieldManager.GetGameObjectById(gameId);
 		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
-		var relativeSpeed =  FixedUpdate / FieldManager.TickSecond / speed;
-		relativeSpeed *= effect == EffectId.UnitFreezed ? SpecialEffect.FreezedSlowCoeff : 1;
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
-		obj.GetComponent<MonsterController>().SetMovement(end ? relativeSpeed / 2 : relativeSpeed, CoordinationHelper.GetViewPoint(pos));
+		var relativeSpeed = end ? 0 : FixedUpdate / FieldManager.TickSecond / speed;
+//		relativeSpeed *= effect == EffectId.UnitFreezed ? SpecialEffect.FreezedSlowCoeff : 1;
+		obj.GetComponent<MonsterController>().SetMovement(relativeSpeed, CoordinationHelper.GetViewPoint(pos));
 	}
-	
+
+	public void ShowAnimation(int gameId, MonsterAnimation animationType)
+	{
+		_fieldManager.GetGameObjectById(gameId).GetComponent<MonsterController>().ShowAnimation(animationType);
+	}
 }

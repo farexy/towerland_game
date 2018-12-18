@@ -1,8 +1,17 @@
-﻿using Helpers;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Models.Client;
+using Helpers;
 using UnityEngine;
 
 public class MonsterController : MonoBehaviour
 {
+	private static readonly Dictionary<MonsterAnimation, bool> AnimBehaviour = new Dictionary<MonsterAnimation, bool>
+	{
+		{MonsterAnimation.Attack, true},
+		{MonsterAnimation.Die, false},
+		{MonsterAnimation.Run, true},
+		{MonsterAnimation.Skill, true}
+	};
 	private Direction _curDir;
     private Vector2 _direction;
     private float _speed;
@@ -27,6 +36,20 @@ public class MonsterController : MonoBehaviour
         _speed = speed;
 	    ChangeDirection(transform.position, direction);
     }
+
+	public void ShowAnimation(MonsterAnimation animationType)
+	{
+		if (!AnimBehaviour[animationType])
+		{
+			SetMovement(0, transform.position);
+		}
+		var animName = animationType.ToString().ToLower();
+		var animator = GetComponent<Animator>();
+		if (animator != null)
+		{
+			animator.SetBool(animName, true);
+		}
+	}
 
     private void Move()
     {
