@@ -215,9 +215,9 @@ public class UIManager : MonoBehaviour
 			switch (abilityId)
 			{
 					case AbilityId.Tower_FreezesUnit:
-						return string.Format("Freezing monsters");
+						return "Freezing monsters";
 					case AbilityId.Tower_10xDamage_10PercentProbability:
-						return string.Format("10% possibility of 10x damage");
+						return "10% possibility of 10x damage";
 			}
 		}
 		return string.Empty;

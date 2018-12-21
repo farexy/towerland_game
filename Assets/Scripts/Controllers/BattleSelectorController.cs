@@ -46,6 +46,7 @@ namespace Controllers
 
         public void OnBackButton()
         {
+            _searchForBattle = false;
             MainMenu.SetActive(true);
             gameObject.SetActive(false);
         }
@@ -53,16 +54,20 @@ namespace Controllers
         private IEnumerator FindBattle()
         {
             _searchForBattle = true;
-            var www = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.Session);
+            var www = new HttpRequest(ConfigurationManager.SearchBattleUrl, null, LocalStorage.Session);
             yield return www.Send();
             if (ConfigurationManager.Debug)
             {
-                var www1 = new HttpRequest(ConfigurationManager.SearchBattleUrl, LocalStorage.HelpSession);
+                var www1 = new HttpRequest(ConfigurationManager.SearchBattleUrl, null, LocalStorage.HelpSession);
                 yield return www1.Send();
             }
             var resp = new BattleSearchCheckResponseModel();
             while (!resp.Found)
             {
+                if (!_searchForBattle)
+                {
+                    yield break;
+                }
                 yield return new WaitForFixedUpdate();
                 var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
                 yield return www2.Send();
@@ -73,6 +78,8 @@ namespace Controllers
                 var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession);
                 yield return www3.Send();
             }
+
+            _searchForBattle = false;
             LocalStorage.CurrentBattleId = resp.BattleId;
             LocalStorage.CurrentSide = resp.Side;
             SceneManager.LoadScene("battle");
@@ -81,10 +88,10 @@ namespace Controllers
         private IEnumerator FindMultiBattle()
         {
             _searchForBattle = true;
-            var www = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, LocalStorage.Session);
+            var www = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, null, LocalStorage.Session);
             yield return www.Send();
 
-            var www1 = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, ComputerPlayer.SessionKey);
+            var www1 = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, null, ComputerPlayer.SessionKey);
             yield return www1.Send();
 		
             var resp = new BattleSearchCheckResponseModel();

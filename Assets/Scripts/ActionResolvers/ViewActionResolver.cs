@@ -10,10 +10,15 @@ namespace Assets.Scripts.Models.Resolvers
     public class ViewActionResolver : BaseActionResolver
     {
         private readonly FieldManager _fieldManager;
+        private readonly MonstersManager _monstersManager;
+        private readonly TowerManager _towerManager;
         
-        public ViewActionResolver(FieldManager manager) : base(manager.Field)
+        public ViewActionResolver(FieldManager manager, MonstersManager monstersManager, TowerManager towerManager)
+            : base(manager.Field)
         {
             _fieldManager = manager;
+            _monstersManager = monstersManager;
+            _towerManager = towerManager;
         }
 
         protected override void ResolveReservedAction(GameAction action)
@@ -25,7 +30,7 @@ namespace Assets.Scripts.Models.Resolvers
             switch (action.ActionId)
             {
                 case ActionId.UnitMoves:
-                    ManagersHelper.MonstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
+                    _monstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
                     break;
                 case ActionId.UnitFreezes:
                     //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.blue);
@@ -37,7 +42,7 @@ namespace Assets.Scripts.Models.Resolvers
                     _fieldManager.RemoveGameObjectWithDelay(action.UnitId, FieldManager.TickSecond * 3);
                     break;
                 case ActionId.UnitAttacksCastle:
-                    ManagersHelper.MonstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Attack);
+                    _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Attack);
                     break;
                 case ActionId.UnitAppears:
                     _fieldManager.RenderFieldState();
@@ -54,13 +59,13 @@ namespace Assets.Scripts.Models.Resolvers
             {
                 case ActionId.TowerAttacks:
                     var unitPos = _fieldManager.GetGameObjectById(action.UnitId).GetComponent<Rigidbody2D>().position;
-                    ManagersHelper.TowerManager.ShowAttack(unitPos, action.TowerId);
+                    _towerManager.ShowAttack(unitPos, action.TowerId);
                     break;
                 case ActionId.TowerAttacksPosition:
-                    ManagersHelper.TowerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
+                    _towerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
                     break;
                 case ActionId.TowerKills:
-                    ManagersHelper.MonstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
+                    _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
                     break;
                 case ActionId.TowerCollapses:
                     _fieldManager.RemoveGameObjectWithDelay(action.TowerId, FieldManager.TickSecond);
@@ -73,10 +78,11 @@ namespace Assets.Scripts.Models.Resolvers
             switch (action.ActionId)
             {
                 case ActionId.MonsterPlayerWins:
-                    ManagersHelper.FieldManager.End(PlayerSide.Monsters);
+                    _monstersManager.ShowAnimation(MonsterAnimation.Victory);
+                    _fieldManager.End(PlayerSide.Monsters);
                     break;
                 case ActionId.TowerPlayerWins:
-                    ManagersHelper.FieldManager.End(PlayerSide.Towers);
+                    _fieldManager.End(PlayerSide.Towers);
                     break;
             }
         }

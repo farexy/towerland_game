@@ -2,6 +2,7 @@
 using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.Effects;
 using Assets.Scripts.Models.GameField;
+using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.Interfaces;
 using Helpers;
 using UnityEngine;
@@ -38,18 +39,18 @@ public class MonstersManager : MonoBehaviour
 					continue;
 				}
 				var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
-				var healthIndicator = string.Format("{0}/{1}", unit.Health, statsHealth);
-				GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
+				var healthIndicator = $"{unit.Health}/{statsHealth}";
 				GUI.backgroundColor = Color.clear;
+				SetUnitInfoColor(unit, statsHealth);
 				var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
 				if (unit.Effect != null && unit.Effect.Id != EffectId.None)
 				{
 					var effectImg = _fieldManager.Resources.LoadTexture(unit.Effect.Id.ToString());
-					GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), new GUIContent(healthIndicator, effectImg));
+					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), new GUIContent(healthIndicator, effectImg));
 				}
 				else
 				{
-					GUI.Box(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), healthIndicator);
+					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), healthIndicator);
 				}
 
 				var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
@@ -74,5 +75,30 @@ public class MonstersManager : MonoBehaviour
 	public void ShowAnimation(int gameId, MonsterAnimation animationType)
 	{
 		_fieldManager.GetGameObjectById(gameId).GetComponent<MonsterController>().ShowAnimation(animationType);
+	}
+
+	public void ShowAnimation(MonsterAnimation animationType)
+	{
+		foreach (var unit in _fieldManager.Field.State.Units)
+		{
+			_fieldManager.GetGameObjectById(unit.GameId).GetComponent<MonsterController>().ShowAnimation(animationType);
+		}
+	}
+
+	private void SetUnitInfoColor(Unit unit, int statsHealth)
+	{
+		GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
+		if (unit.Effect != null && unit.Effect.Id != EffectId.None)
+		{
+			switch (unit.Effect.Id)
+			{
+				case EffectId.UnitFreezed:
+					GUI.contentColor = Color.cyan;
+					break;
+				case EffectId.UnitPoisoned:
+					GUI.contentColor = Color.green;
+					break;
+			}
+		}
 	}
 }

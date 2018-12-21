@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Models.Client;
+using Assets.Scripts.Models.Effects;
 using Helpers;
 using UnityEngine;
 

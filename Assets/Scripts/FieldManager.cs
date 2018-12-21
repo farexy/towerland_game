@@ -36,6 +36,9 @@ public class FieldManager : MonoBehaviour
 	private IStatsLibrary _statsLibrary;
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
 	
+	private MonstersManager _monstersManager;
+	private TowerManager _towerManager;
+	
 	public GameObjectType Selected { get; set; }
 	public ResourcesCache Resources { get; set; }
 	
@@ -65,6 +68,8 @@ public class FieldManager : MonoBehaviour
 		_statsLibrary = LocalStorage.StatsLibrary;
 		_pool = GetComponent<ObjectPool>();
 		_gameObjects = new Dictionary<int, GameObjectScript>();
+		_monstersManager = GetComponent<MonstersManager>();
+		_towerManager = GetComponent<TowerManager>();
 		Resources = new ResourcesCache();
 		AvailableObjects = new HashSet<GameObjectType>
 		{
@@ -344,7 +349,7 @@ public class FieldManager : MonoBehaviour
 	private IEnumerator Leave(PlayerSide playerSide)
 	{
 		Winner = playerSide;
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(5);
 		SceneManager.LoadScene("StartPages");
 	}
 
@@ -360,7 +365,7 @@ public class FieldManager : MonoBehaviour
 		Field = JsonConvert.DeserializeObject<Field>(httpRequest.ResponseString);
 		
 		_stateResolver = new FieldStateActionResolver(Field);
-		_viewResolver = new ViewActionResolver(this);
+		_viewResolver = new ViewActionResolver(this, _monstersManager, _towerManager);
 		
 		Width = Field.StaticData.Width;
 		Height = Field.StaticData.Height;
