@@ -171,7 +171,6 @@ public class FieldManager : MonoBehaviour
 				? CoordinationHelper.GetViewPoint3(unit.Position)
 				: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);	
 		}
-		
 		//delete unexisting
 //		foreach (var gId in _gameObjects.Keys.ToArray())
 //		{

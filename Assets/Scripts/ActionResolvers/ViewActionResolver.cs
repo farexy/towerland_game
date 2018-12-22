@@ -39,7 +39,7 @@ namespace Assets.Scripts.Models.Resolvers
                     //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
                     break;
                 case ActionId.UnitDisappears:
-                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, FieldManager.TickSecond * 3);
+                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 5);
                     break;
                 case ActionId.UnitAttacksCastle:
                     _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Attack);
@@ -47,8 +47,8 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.UnitAppears:
                     _fieldManager.RenderFieldState();
                     break;
-                case ActionId.UnitAppliesEffect_DarkMagic:
-                    // unit animation
+                case ActionId.UnitAppliesSkill:
+                    _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Skill);
                     break;
             }
         }
@@ -68,7 +68,8 @@ namespace Assets.Scripts.Models.Resolvers
                     _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
                     break;
                 case ActionId.TowerCollapses:
-                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, FieldManager.TickSecond);
+                    _towerManager.ShowCollapse(action.TowerId);
+                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 1);
                     break;
             }
         }

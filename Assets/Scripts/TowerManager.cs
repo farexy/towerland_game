@@ -42,6 +42,11 @@ public class TowerManager : MonoBehaviour
 		}
 	}
 
+	public void ShowCollapse(int towerId)
+	{
+		StartCoroutine(ShowExplosion(CoordinationHelper.GetViewPoint3(_fieldManager.Field[towerId].Position)));
+	}
+
 	private IEnumerator WhizzbangMovement(Rigidbody2D whizzbang, Vector3 to, float speed, bool explosion)
 	{
 		while (CoordinationHelper.DifferentFloats(whizzbang.position.x, to.x, 0.01f)
@@ -54,13 +59,7 @@ public class TowerManager : MonoBehaviour
 
 		if (explosion)
 		{
-			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.05f);
-			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.05f);
-			whizzbang.gameObject.transform.localScale *= 1.7f;
-			yield return new WaitForSeconds(0.05f);
-			whizzbang.gameObject.transform.localScale /= 4.913f;
+			StartCoroutine(ShowExplosion(to));
 		}
 
 		_pool.PutToPool(whizzbang.GetComponent<GameObjectScript>());
@@ -77,5 +76,15 @@ public class TowerManager : MonoBehaviour
 				: attackType == TowerStats.AttackType.Magic
 					? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
 					: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
+	}
+
+	private IEnumerator ShowExplosion(Vector3 pos)
+	{
+		var explosion = _pool.GetFromPool(GameObjectType.Explosion);
+		explosion.transform.position = pos;
+		var particles = explosion.GetComponent<ParticleSystem>();
+		particles.Play();
+		yield return new WaitWhile(() => particles.isPlaying);
+		_pool.PutToPool(explosion);
 	}
 }

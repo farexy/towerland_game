@@ -33,6 +33,7 @@ public class MonsterController : MonoBehaviour
 
     public void SetMovement(float speed, Vector2 direction)
     {
+	    
         _direction = direction;
         _speed = speed;
 	    ChangeDirection(transform.position, direction);
@@ -49,6 +50,7 @@ public class MonsterController : MonoBehaviour
 		if (animator != null)
 		{
 			animator.SetBool(animName, true);
+			animator.SetTrigger(animName);
 		}
 	}
 

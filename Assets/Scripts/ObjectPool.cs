@@ -21,7 +21,7 @@ public class ObjectPool : MonoBehaviour
 			for (int i = 1; i <= cnt; i++)
 			{
 				var gameObjName = string.Format("{0}_{1}", x.ToString(), i);
-				var gameObj = GameObject.Find(name);
+				var gameObj = GameObject.Find(gameObjName);
 				if (gameObj == null)
 				{
 					continue;
@@ -45,7 +45,7 @@ public class ObjectPool : MonoBehaviour
 	public GameObjectScript GetFromPool(GameObjectType type)
 	{
 		var namePrefix = type.ToString();
-		var cnt = GameObjectLogical.ResolveType(type) == GameObjectType.Whizzbang ? 2 : 4;
+		var cnt = GameObjectLogical.ResolveType(type) == GameObjectType.Whizzbang ? 10 : 4;
 
 		for (int i = 1; i <= cnt; i++)
 		{
@@ -55,6 +55,11 @@ public class ObjectPool : MonoBehaviour
 			{
 				obj.IsUsed = true;
 				return obj;
+			}
+
+			if (obj == null)
+			{
+				throw new ArgumentNullException("GameObjectScript is missing");
 			}
 		}
 

@@ -68,7 +68,7 @@ namespace Controllers
                 {
                     yield break;
                 }
-                yield return new WaitForFixedUpdate();
+                yield return new WaitForSeconds(2);
                 var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
                 yield return www2.Send();
                 resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.ResponseString);

@@ -59,7 +59,7 @@ namespace Assets.Scripts.Models.Resolvers
                     _field.AddGameObject(action.GoUnit);
                     break;
 
-                case ActionId.UnitAppliesEffect_DarkMagic:
+                case ActionId.UnitAppliesSkill:
                     _field[action.UnitId].WaitTicks += action.WaitTicks;
                     break;
             }
