@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
@@ -167,6 +168,7 @@ public class FieldManager : MonoBehaviour
 			var obj1 = _pool.GetFromPool(unit.Type);
 			obj1.GameId = unit.GameId;
 			_gameObjects.Add(unit.GameId, obj1);
+			_monstersManager.ShowAnimation(unit.GameId, MonsterAnimation.Spawn);
 			obj1.transform.position = FlyingObjects.Contains(obj1.Type)
 				? CoordinationHelper.GetViewPoint3(unit.Position)
 				: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);	

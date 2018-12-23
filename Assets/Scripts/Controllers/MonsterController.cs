@@ -11,8 +11,11 @@ public class MonsterController : MonoBehaviour
 		{MonsterAnimation.Attack, true},
 		{MonsterAnimation.Die, false},
 		{MonsterAnimation.Run, true},
-		{MonsterAnimation.Skill, true}
+		{MonsterAnimation.Skill, true},
+		{MonsterAnimation.Spawn, true}
 	};
+
+	private Transform _healthBarTransform;
 	private Direction _curDir;
     private Vector2 _direction;
     private float _speed;
@@ -20,6 +23,7 @@ public class MonsterController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
+		_healthBarTransform = GetComponentInChildren<ProgressBarController>().transform.parent;
 		_curDir = Direction.Down;
 		transform.rotation = Quaternion.Euler(90, 180, 0);
 	    _direction = transform.position;
@@ -27,13 +31,17 @@ public class MonsterController : MonoBehaviour
 	
 	// Update is called once per frame
 	private void FixedUpdate()
-	{
+	{		
+		if(_healthBarTransform.rotation != Quaternion.Euler(90, 0, 0))
+		{
+			_healthBarTransform.rotation = Quaternion.Euler(90, 0, 0);
+		}
+
 		Move();
 	}
 
     public void SetMovement(float speed, Vector2 direction)
     {
-	    
         _direction = direction;
         _speed = speed;
 	    ChangeDirection(transform.position, direction);
@@ -45,11 +53,10 @@ public class MonsterController : MonoBehaviour
 		{
 			SetMovement(0, transform.position);
 		}
-		var animName = animationType.ToString().ToLower();
 		var animator = GetComponent<Animator>();
 		if (animator != null)
 		{
-			animator.SetBool(animName, true);
+			var animName = animationType.ToString().ToLower();
 			animator.SetTrigger(animName);
 		}
 	}
@@ -64,68 +71,28 @@ public class MonsterController : MonoBehaviour
 	{
 		if (CoordinationHelper.DifferentFloats(oldPos.x, newPos.x) && oldPos.x > newPos.x)
 		{
-			GetComponent<Rigidbody2D>().MoveRotation(90);
 			SetCurDir(Direction.Left);
+			GetComponent<Rigidbody2D>().MoveRotation(90);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.x, newPos.x) && oldPos.x < newPos.x)
 		{
-			GetComponent<Rigidbody2D>().MoveRotation(270);
 			SetCurDir(Direction.Right);
+			GetComponent<Rigidbody2D>().MoveRotation(270);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.y, newPos.y) && oldPos.y < newPos.y)
 		{
-			GetComponent<Rigidbody2D>().MoveRotation(0);
 			SetCurDir(Direction.Up);
+			GetComponent<Rigidbody2D>().MoveRotation(0);
 		}
 		if (CoordinationHelper.DifferentFloats(oldPos.y, newPos.y) && oldPos.y > newPos.y)
 		{
-			GetComponent<Rigidbody2D>().MoveRotation(180);
 			SetCurDir(Direction.Down);
+			GetComponent<Rigidbody2D>().MoveRotation(180);
 		}
 	}
 
 	private void SetCurDir(Direction dir)
 	{
-		if (_curDir == Direction.Down && dir == Direction.Right)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
-		}
-		if (_curDir == Direction.Down && dir == Direction.Left)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
-		}
-		if (_curDir == Direction.Up && dir == Direction.Right)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
-		}
-		if (_curDir == Direction.Up && dir == Direction.Left)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
-		}
-		if (_curDir == Direction.Right && dir == Direction.Down)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
-		}
-		if (_curDir == Direction.Right && dir == Direction.Up)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
-		}
-		if (_curDir == Direction.Left && dir == Direction.Up)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, 90);
-		}
-		if (_curDir == Direction.Left && dir == Direction.Down)
-		{
-			GetComponentInChildren<ProgressBarController>()
-				.transform.parent.GetComponent<RectTransform>().Rotate(Vector3.up, -90);
-		}
 		_curDir = dir;
 	}
 

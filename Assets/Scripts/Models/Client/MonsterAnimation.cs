@@ -2,6 +2,6 @@ namespace Assets.Scripts.Models.Client
 {
     public enum MonsterAnimation
     {
-        Run, Die, Attack, Skill, Victory
+        Run, Die, Attack, Skill, Victory, Spawn
     }
 }

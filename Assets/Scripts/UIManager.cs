@@ -46,7 +46,6 @@ public class UIManager : MonoBehaviour
 	void Start()
 	{
 		InitDetailsPanel();
-		DetailsPanel.SetActive(false);
 		_coinImg = Resources.Load<Texture2D>("coin");
 		_castleImg = Resources.Load<Texture2D>("castle");
 		_fieldManager = GetComponent<FieldManager>();
@@ -157,6 +156,9 @@ public class UIManager : MonoBehaviour
 
 	private void InitDetailsPanel()
 	{
+		DetailsPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 3f);
+		DetailsPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height);
+		
 		_iconImg = GameObject.Find("icon_img").GetComponent<Image>();
 		_nameText = GameObject.Find("name_text").GetComponent<Text>();
 		_costText = GameObject.Find("cost_text").GetComponent<Text>();
@@ -166,6 +168,8 @@ public class UIManager : MonoBehaviour
 		_healthRangeText = GameObject.Find("healthRange_text").GetComponent<Text>();
 		_offDefTypeText = GameObject.Find("offDef_text").GetComponent<Text>();
 		_specialText = GameObject.Find("special_text").GetComponent<Text>();
+		
+		DetailsPanel.SetActive(false);
 	}
 
 	private void LoadDetailsIcon()

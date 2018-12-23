@@ -9,9 +9,8 @@ using UnityEngine;
 
 public class MonstersManager : MonoBehaviour
 {
-	private const int Up = 30;
-	private const int Width = 70;
-	private const int Height = 40;
+	private const int Width = 50;
+	private const int Height = 30;
 	private const float FixedUpdate = 0.02f;
 	
 	private IStatsLibrary _statsLibrary;
@@ -41,17 +40,18 @@ public class MonstersManager : MonoBehaviour
 				var statsHealth = _statsLibrary.GetUnitStats(unit.Type).Health;
 				var healthIndicator = $"{unit.Health}/{statsHealth}";
 				GUI.backgroundColor = Color.clear;
-				SetUnitInfoColor(unit, statsHealth);
 				var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
+				
+				SetUnitEffectColor(unit);
 				if (unit.Effect != null && unit.Effect.Id != EffectId.None)
 				{
 					var effectImg = _fieldManager.Resources.LoadTexture(unit.Effect.Id.ToString());
-					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), new GUIContent(healthIndicator, effectImg));
+					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Height / 2, Width, Height), new GUIContent(effectImg));
 				}
-				else
-				{
-					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Up, Width, Height), healthIndicator);
-				}
+				
+				SetUnitInfoColor(unit, statsHealth);
+				GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Height, Width, Height), healthIndicator);
+				
 
 				var healthBar = unitObj.GetComponentInChildren<ProgressBarController>();
 				if (healthBar != null)
@@ -88,17 +88,21 @@ public class MonstersManager : MonoBehaviour
 	private void SetUnitInfoColor(Unit unit, int statsHealth)
 	{
 		GUI.contentColor = unit.Health < statsHealth * 0.4 ? Color.red : Color.black;
-		if (unit.Effect != null && unit.Effect.Id != EffectId.None)
+	}
+
+	private void SetUnitEffectColor(Unit unit)
 		{
-			switch (unit.Effect.Id)
+			if (unit.Effect != null && unit.Effect.Id != EffectId.None)
 			{
-				case EffectId.UnitFreezed:
-					GUI.contentColor = Color.cyan;
-					break;
-				case EffectId.UnitPoisoned:
-					GUI.contentColor = Color.green;
-					break;
+				switch (unit.Effect.Id)
+				{
+					case EffectId.UnitFreezed:
+						GUI.contentColor = Color.cyan;
+						break;
+					case EffectId.UnitPoisoned:
+						GUI.contentColor = Color.green;
+						break;
+				}
 			}
-		}
 	}
 }

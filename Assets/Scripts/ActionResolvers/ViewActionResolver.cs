@@ -39,7 +39,7 @@ namespace Assets.Scripts.Models.Resolvers
                     //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
                     break;
                 case ActionId.UnitDisappears:
-                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 5);
+                    _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 3);
                     break;
                 case ActionId.UnitAttacksCastle:
                     _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Attack);
@@ -69,7 +69,7 @@ namespace Assets.Scripts.Models.Resolvers
                     break;
                 case ActionId.TowerCollapses:
                     _towerManager.ShowCollapse(action.TowerId);
-                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 1);
+                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 2);
                     break;
             }
         }

@@ -44,7 +44,7 @@ public class TowerManager : MonoBehaviour
 
 	public void ShowCollapse(int towerId)
 	{
-		StartCoroutine(ShowExplosion(CoordinationHelper.GetViewPoint3(_fieldManager.Field[towerId].Position)));
+		StartCoroutine(ShowExplosion(CoordinationHelper.GetViewPoint3(_fieldManager.Field[towerId].Position), 1.5f));
 	}
 
 	private IEnumerator WhizzbangMovement(Rigidbody2D whizzbang, Vector3 to, float speed, bool explosion)
@@ -78,13 +78,15 @@ public class TowerManager : MonoBehaviour
 					: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
 	}
 
-	private IEnumerator ShowExplosion(Vector3 pos)
+	private IEnumerator ShowExplosion(Vector3 pos, float scale = 1)
 	{
 		var explosion = _pool.GetFromPool(GameObjectType.Explosion);
 		explosion.transform.position = pos;
+		explosion.transform.localScale *= scale;
 		var particles = explosion.GetComponent<ParticleSystem>();
 		particles.Play();
 		yield return new WaitWhile(() => particles.isPlaying);
+		explosion.transform.localScale /= scale;
 		_pool.PutToPool(explosion);
 	}
 }
