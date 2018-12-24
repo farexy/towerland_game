@@ -69,9 +69,9 @@ public class TowerManager : MonoBehaviour
 	{
 		var stats = _statsLibrary.GetTowerStats(towerType);
 		var attackType = stats.Attack;
-		return stats.Ability != AbilityId.None && stats.Ability == AbilityId.Tower_FreezesUnit
+		return stats.Skill != SkillId.None && stats.Skill == SkillId.FreezesUnit
 			? _pool.GetFromPool(GameObjectType.Whizzbang_Frost)
-			: stats.Ability != AbilityId.None && stats.Ability == AbilityId.Tower_PoisonsUnit
+			: stats.Skill != SkillId.None && stats.Skill == SkillId.PoisonsUnit
 				? _pool.GetFromPool(GameObjectType.Whizzbang_Poison)
 				: attackType == TowerStats.AttackType.Magic
 					? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
@@ -81,12 +81,14 @@ public class TowerManager : MonoBehaviour
 	private IEnumerator ShowExplosion(Vector3 pos, float scale = 1)
 	{
 		var explosion = _pool.GetFromPool(GameObjectType.Explosion);
-		explosion.transform.position = pos;
-		explosion.transform.localScale *= scale;
+		var explosionTransform = explosion.transform;
+
+		explosionTransform.position = pos;
+		explosionTransform.localScale *= scale;
 		var particles = explosion.GetComponent<ParticleSystem>();
 		particles.Play();
 		yield return new WaitWhile(() => particles.isPlaying);
-		explosion.transform.localScale /= scale;
+		explosionTransform.localScale /= scale;
 		_pool.PutToPool(explosion);
 	}
 }

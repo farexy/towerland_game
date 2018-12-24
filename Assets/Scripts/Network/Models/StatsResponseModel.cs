@@ -7,5 +7,6 @@ namespace Assets.Scripts.Network.Models
         public UnitStats[] UnitStats { get; set; }
         public TowerStats[] TowerStats { get; set; }
         public DefenceCoeff[] DefenceCoeffs { get; set; }
+        public Skill[] Skills { get; set; }
     }
 }

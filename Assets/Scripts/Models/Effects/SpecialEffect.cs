@@ -8,6 +8,8 @@ namespace Assets.Scripts.Models.Effects
     
     [JsonProperty("i")] public EffectId Id { set; get; }
     [JsonProperty("d")] public int Duration { set; get; }
+    [JsonProperty("e")] public double EffectValue { get; set; }
+
 
     public static SpecialEffect Empty
     {

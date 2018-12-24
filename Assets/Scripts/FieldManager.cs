@@ -287,7 +287,7 @@ public class FieldManager : MonoBehaviour
 				RenderFieldState();
 				_resolver = StartCoroutine(ResolveActions(ticks.ActionsByTicks));
 			}
-			yield return new WaitForSeconds(0.4f); 	
+			yield return new WaitForSeconds(0.4f);
 		}
 	}
 
@@ -306,7 +306,15 @@ public class FieldManager : MonoBehaviour
 			//StartCoroutine(Tick());
 			foreach (var action in tick.Actions)
 			{
-				_stateResolver.Resolve(action);
+				try
+				{
+					_stateResolver.Resolve(action);
+				}
+				catch (NullReferenceException ex)
+				{
+					Debug.LogError(ex);
+				}
+
 				yield return null;
 				_viewResolver.Resolve(action);
 			}

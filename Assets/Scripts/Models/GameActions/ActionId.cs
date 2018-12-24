@@ -12,8 +12,8 @@
     TowerAttacksPosition = 12,
     TowerKills = 13,
 
-    TowerRecharges = 21,
-    TowerSearches = 22,
+    TowerGetsEffect = 20,
+    TowerEffectCanceled = 29,
 
     TowerCollapses = 31,
 
@@ -21,10 +21,10 @@
     UnitMoves = 101,
 
     UnitDisappears = 201, //dies or attacks castle
-    UnitRecievesDamage = 202,
-    UnitFreezes = 210,
-    UnitPoisoned = 215,
-    UnitEffectCanseled = 290,
+    UnitReceivesDamage = 202,
+
+    UnitGetsEffect = 210,
+    UnitEffectCanceled = 290,
 
     UnitAttacksCastle = 301,
     UnitDestroysTower = 310,
@@ -33,14 +33,15 @@
 
     UnitAppears = 801,
     UnitRevives = 810,
-    
+
     Other = 1000,
-    MonsterPlayerRecievesMoney = 1001,
-    TowerPlayerRecievesMoney = 1002,
-    PlayersRecievesMoney = 1003,
+    MonsterPlayerReceivesMoney = 1001,
+    TowerPlayerReceivesMoney = 1002,
+    PlayersReceivesMoney = 1003,
+    MonsterPlayerLosesMoney = 1004,
+    TowerPlayerLosesMoney = 1005,
 
     MonsterPlayerWins = 1010,
     TowerPlayerWins = 1020,
-    
   }
 }

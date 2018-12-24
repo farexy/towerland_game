@@ -12,7 +12,7 @@ namespace Assets.Scripts.Models.Resolvers
         private readonly FieldManager _fieldManager;
         private readonly MonstersManager _monstersManager;
         private readonly TowerManager _towerManager;
-        
+
         public ViewActionResolver(FieldManager manager, MonstersManager monstersManager, TowerManager towerManager)
             : base(manager.Field)
         {
@@ -32,11 +32,8 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.UnitMoves:
                     _monstersManager.MoveUnit(action.UnitId, action.Position, EffectId.None);
                     break;
-                case ActionId.UnitFreezes:
-                    //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.blue);
-                    break;
-                case ActionId.UnitEffectCanseled:
-                    //_fieldManager.GetGameObjectById(action.UnitId).SetColor(Color.clear);
+                case ActionId.UnitGetsEffect:
+                    //_fieldManager.GetGameObjectById(action.UnitId).SetEffect(action.EffectId);
                     break;
                 case ActionId.UnitDisappears:
                     _fieldManager.RemoveGameObjectWithDelay(action.UnitId, 3);

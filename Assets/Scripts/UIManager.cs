@@ -196,7 +196,7 @@ public class UIManager : MonoBehaviour
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Range: " + stats.Range;
 			_specialText.fontSize = 12;
-			_specialText.text = GetAbilityText(stats.Ability);
+			_specialText.text = GetSkillText(stats.Skill);
 		}
 		else
 		{
@@ -212,15 +212,15 @@ public class UIManager : MonoBehaviour
 		}
 	}
 
-	private string GetAbilityText(AbilityId abilityId)
+	private string GetSkillText(SkillId skillId)
 	{
-		if (abilityId != AbilityId.None)
+		if (skillId != SkillId.None)
 		{
-			switch (abilityId)
+			switch (skillId)
 			{
-					case AbilityId.Tower_FreezesUnit:
+					case SkillId.FreezesUnit:
 						return "Freezing monsters";
-					case AbilityId.Tower_10xDamage_10PercentProbability:
+					case SkillId.ExtraDamageUnit:
 						return "10% possibility of 10x damage";
 			}
 		}

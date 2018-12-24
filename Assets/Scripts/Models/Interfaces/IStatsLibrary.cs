@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.GameObjects;
+﻿using Assets.Scripts.Models.Effects;
+using Assets.Scripts.Models.GameObjects;
 using Assets.Scripts.Models.Stats;
 
 namespace Assets.Scripts.Models.Interfaces
@@ -8,5 +9,6 @@ namespace Assets.Scripts.Models.Interfaces
     IStats GetStats(GameObjectType type);
     UnitStats GetUnitStats(GameObjectType type);
     TowerStats GetTowerStats(GameObjectType type);
+    Skill GetSkill(SkillId id, GameObjectType goType);
   }
 }

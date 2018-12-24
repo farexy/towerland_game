@@ -31,16 +31,16 @@ namespace Assets.Scripts.Models.Resolvers
                     _field.State.Castle.Health -= action.Damage;
                     break;
 
-                case ActionId.UnitRecievesDamage:
+                case ActionId.UnitReceivesDamage:
                     ((Unit)_field[action.UnitId]).Health -= action.Damage;
                     break;
 
-                case ActionId.UnitFreezes:
-                    _field[action.UnitId].Effect = new SpecialEffect{Duration = action.WaitTicks, Id = EffectId.UnitFreezed};
+                case ActionId.UnitGetsEffect:
+                    _field[action.UnitId].Effect = new SpecialEffect{Id = action.EffectId, Duration = action.WaitTicks, EffectValue = action.EffectValue};
                     break;
 
-                case ActionId.UnitPoisoned:
-                    _field[action.UnitId].Effect = new SpecialEffect{Duration = action.WaitTicks, Id = EffectId.UnitPoisoned};
+                case ActionId.UnitEffectCanceled:
+                    _field[action.UnitId].Effect = SpecialEffect.Empty;
                     break;
 
                 case ActionId.UnitDisappears:
@@ -49,10 +49,6 @@ namespace Assets.Scripts.Models.Resolvers
                         await Task.Delay(500);
                         _field.RemoveGameObject(action.UnitId);
                     });
-                    break;
-
-                case ActionId.UnitEffectCanseled:
-                    _field[action.UnitId].Effect = SpecialEffect.Empty;
                     break;
 
                 case ActionId.UnitAppears:
@@ -74,6 +70,14 @@ namespace Assets.Scripts.Models.Resolvers
                     _field[action.TowerId].WaitTicks = action.WaitTicks;
                     break;
 
+                case ActionId.TowerGetsEffect:
+                    _field[action.TowerId].Effect = new SpecialEffect{Id = action.EffectId, Duration = action.WaitTicks, EffectValue = action.EffectValue};
+                    break;
+
+                case ActionId.TowerEffectCanceled:
+                    _field[action.TowerId].Effect = SpecialEffect.Empty;
+                    break;
+
                 case ActionId.TowerCollapses:
                     Task.Run(async () =>
                     {
@@ -88,15 +92,21 @@ namespace Assets.Scripts.Models.Resolvers
         {
             switch (action.ActionId)
             {
-                case ActionId.MonsterPlayerRecievesMoney:
+                case ActionId.MonsterPlayerReceivesMoney:
                     _field.State.MonsterMoney += action.Money;
                     break;
-                case ActionId.TowerPlayerRecievesMoney:
+                case ActionId.TowerPlayerReceivesMoney:
                     _field.State.TowerMoney += action.Money;
                     break;
-                case ActionId.PlayersRecievesMoney:
+                case ActionId.PlayersReceivesMoney:
                     _field.State.TowerMoney += action.Money;
                     _field.State.MonsterMoney += action.Money;
+                    break;
+                case ActionId.TowerPlayerLosesMoney:
+                    _field.State.TowerMoney -= action.Money;
+                    break;
+                case ActionId.MonsterPlayerLosesMoney:
+                    _field.State.MonsterMoney -= action.Money;
                     break;
             }
         }

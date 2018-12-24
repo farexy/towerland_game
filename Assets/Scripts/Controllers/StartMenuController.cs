@@ -88,7 +88,7 @@ public class StartMenuController : MonoBehaviour
 //			yield break;
 //		}
 		var resp = JsonConvert.DeserializeObject<StaticDataResponseModel>(www.ResponseString);
-		LocalStorage.StatsLibrary = new StatsLibrary(resp.Stats.UnitStats, resp.Stats.TowerStats, resp.Stats.DefenceCoeffs);
+		LocalStorage.StatsLibrary = new StatsLibrary(resp.Stats.UnitStats, resp.Stats.TowerStats, resp.Stats.DefenceCoeffs, resp.Stats.Skills);
 		ServerTime.Init(resp.ServerTime);
 		ComputerPlayer.Init(resp.ComputerPlayerSessionKey);
 		_initializing = false;

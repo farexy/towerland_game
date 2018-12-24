@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Models.GameField;
+﻿using Assets.Scripts.Models.Effects;
+using Assets.Scripts.Models.GameField;
 using Assets.Scripts.Models.GameObjects;
 using Newtonsoft.Json;
 
@@ -13,6 +14,8 @@ namespace Assets.Scripts.Models.GameActions
     [JsonProperty("d")] public int Damage;
     [JsonProperty("w")] public int WaitTicks;
     [JsonProperty("m")] public int Money;
+    [JsonProperty("e")] public EffectId EffectId;
+    [JsonProperty("ev")] public double EffectValue;
     [JsonProperty("gu")] public Unit GoUnit;
     [JsonProperty("gt")] public Tower GoTower;
   }
