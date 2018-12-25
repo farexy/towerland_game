@@ -68,6 +68,10 @@ public class MonstersManager : MonoBehaviour
 		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
 		var relativeSpeed = end ? 0 : FixedUpdate / FieldManager.TickSecond / speed;
+		if (end)
+		{
+			ShowAnimation(MonsterAnimation.Attack); // TODO remove after presentation
+		}
 //		relativeSpeed *= effect == EffectId.UnitFreezed ? SpecialEffect.FreezedSlowCoeff : 1;
 		obj.GetComponent<MonsterController>().SetMovement(relativeSpeed, CoordinationHelper.GetViewPoint(pos));
 	}

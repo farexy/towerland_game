@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
 	private PlayerSide _side;
 	private Texture2D _coinImg;
 	private Texture2D _castleImg;
+	private SkillTextBuilder _skillTextBuilder;
 
 	private Image _iconImg;
 	private Text _speedText;
@@ -54,6 +55,7 @@ public class UIManager : MonoBehaviour
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
 		_towerTypes = _fieldManager.AvailableObjects
 			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Tower && t != GameObjectType.Tower);
+		_skillTextBuilder = new SkillTextBuilder();
 	}
 	
 	private void OnGUI()
@@ -196,7 +198,7 @@ public class UIManager : MonoBehaviour
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Range: " + stats.Range;
 			_specialText.fontSize = 12;
-			_specialText.text = GetSkillText(stats.Skill);
+			_specialText.text = _skillTextBuilder.BuildSkillText(stats.Skill, selected);
 		}
 		else
 		{
@@ -208,23 +210,8 @@ public class UIManager : MonoBehaviour
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Health: " + stats.Health;
 			_specialText.fontSize = 14;
-			_specialText.text = stats.IsAir ? "Air monster" : string.Empty;
+			_specialText.text = _skillTextBuilder.BuildSkillText(stats.Skill, selected);
 		}
-	}
-
-	private string GetSkillText(SkillId skillId)
-	{
-		if (skillId != SkillId.None)
-		{
-			switch (skillId)
-			{
-					case SkillId.FreezesUnit:
-						return "Freezing monsters";
-					case SkillId.ExtraDamageUnit:
-						return "10% possibility of 10x damage";
-			}
-		}
-		return string.Empty;
 	}
 
 	private string GetName(GameObjectType type)

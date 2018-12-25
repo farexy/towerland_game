@@ -66,7 +66,7 @@ namespace Assets.Scripts.Models.Resolvers
                     break;
                 case ActionId.TowerCollapses:
                     _towerManager.ShowCollapse(action.TowerId);
-                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 2);
+                    _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 1.5f);
                     break;
             }
         }
