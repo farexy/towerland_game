@@ -253,7 +253,7 @@ public class FieldManager : MonoBehaviour
 		var command = new StateChangeCommandRequestModel
 		{
 			BattleId = _battleId,
-			CurrentTick	= _tickCount,
+			CurrentTick	= _tickCount + 1,
 			TowerCreationOptions = GameObjectLogical.ResolveType(type) == GameObjectType.Tower
 				? new []{new TowerCreationOption{Type = type, Position = position.Value}}
 				: null,
