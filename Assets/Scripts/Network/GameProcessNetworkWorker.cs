@@ -18,15 +18,10 @@ namespace Assets.Scripts.Network
         }
 
         // TODO use HttpRequest
-        public WWW PostCommand(StateChangeCommandRequestModel requestModel)
+        public WWW PostCommand(StateChangeCommandRequestModel requestModel, string session)
         {
-            var postData = JsonConvert.SerializeObject(requestModel);
-            Dictionary<string, string> headers = new Dictionary<string, string> {{"Content-Type", "application/json"}};
-
-            byte[] pData = Encoding.ASCII.GetBytes(postData.ToCharArray());
-		
-            WWW www = new WWW(ConfigurationManager.GameProcessCommandUrl, pData, headers);
-            return www;   
+            var www = new WwwWrapper(ConfigurationManager.GameProcessCommandUrl, requestModel.ToJson(), session);
+            return www.SendRequest();
         }
     }
 }

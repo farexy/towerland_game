@@ -8,5 +8,7 @@ namespace Helpers
         {
             SessionKey = sessionKey;
         }
+
+        public static bool Active { get; set; }
     }
 }

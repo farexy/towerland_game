@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Assets.Scripts.Models.State;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Models;
 using Helpers;
@@ -79,10 +81,7 @@ namespace Controllers
                 yield return www3.Send();
             }
 
-            _searchForBattle = false;
-            LocalStorage.CurrentBattleId = resp.BattleId;
-            LocalStorage.CurrentSide = resp.Side;
-            SceneManager.LoadScene("battle");
+            LoadBattle(resp.BattleId, resp.Side, false);
         }
 
         private IEnumerator FindMultiBattle()
@@ -93,7 +92,7 @@ namespace Controllers
 
             var www1 = new HttpRequest(ConfigurationManager.SearchMultiBattleUrl, null, ComputerPlayer.SessionKey);
             yield return www1.Send();
-		
+
             var resp = new BattleSearchCheckResponseModel();
             while (!resp.Found)
             {
@@ -105,9 +104,16 @@ namespace Controllers
 
             var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, ComputerPlayer.SessionKey);
             yield return www3.Send();
-		
-            LocalStorage.CurrentBattleId = resp.BattleId;
-            LocalStorage.CurrentSide = resp.Side;
+
+            LoadBattle(resp.BattleId, resp.Side, true);
+        }
+
+        private void LoadBattle(Guid id, PlayerSide side, bool multiBattle)
+        {
+            _searchForBattle = false;
+            LocalStorage.CurrentBattleId = id;
+            LocalStorage.CurrentSide = side;
+            ComputerPlayer.Active = multiBattle;
             SceneManager.LoadScene("battle");
         }
     }

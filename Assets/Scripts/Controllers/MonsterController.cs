@@ -30,7 +30,7 @@ public class MonsterController : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	private void FixedUpdate()
+	private void Update()
 	{		
 		if(_healthBarTransform.rotation != Quaternion.Euler(90, 0, 0))
 		{
@@ -63,8 +63,10 @@ public class MonsterController : MonoBehaviour
 
     private void Move()
     {
-        Vector2 p = Vector2.MoveTowards(transform.position, _direction, _speed);
-        GetComponent<Rigidbody2D>().MovePosition(p);
+	    var distance = Vector3.Distance(transform.position, _direction);
+	    var currSpeed = distance > 1 ? _speed * distance : _speed;
+      Vector2 p = Vector2.MoveTowards(transform.position, _direction, currSpeed);
+      GetComponent<Rigidbody2D>().MovePosition(p);
     }
 
 	private void ChangeDirection(Vector2 oldPos, Vector2 newPos)

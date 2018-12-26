@@ -26,12 +26,12 @@ namespace Helpers
         case SkillId.None:
           break;
         case SkillId.FreezesUnit:
-          sb.Append("Freezes unit on attack");
-          sb.Append($". When freezed unit speed decreases by {skill.DebuffValue} times");
+          sb.Append("Freezes unit on attack.");
+          sb.Append($" When freezed unit speed decreases by {skill.DebuffValue} times");
           break;
         case SkillId.PoisonsUnit:
-          sb.Append("Poisons unit on attack");
-          sb.Append($". When poisoned unit loses {skill.DebuffValue * 100}% of health on each step");
+          sb.Append("Poisons unit on attack.");
+          sb.Append($" When poisoned unit loses {skill.DebuffValue * 100}% of health on each step");
           break;
         case SkillId.ExtraDamageUnit:
           sb.Append($" make {skill.BuffValue}x extra damage");
@@ -70,7 +70,7 @@ namespace Helpers
       {
         sb.Append($" for {skill.Duration} seconds");
       }
-      
+
       return sb.ToString();
     }
   }

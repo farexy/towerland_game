@@ -77,10 +77,8 @@ public class LoginController : MonoBehaviour
 	private IEnumerator LoginPost(string login, string password)
 	{
 		var requestModel = new SignInRequestModel {Email = login, Password = password};
-		var postData = JsonConvert.SerializeObject(requestModel);
-		
-		var www = new HttpRequest(ConfigurationManager.LoginUserUrl, postData, null);
-		yield return www.Send();
+		var www = new WwwWrapper(ConfigurationManager.LoginUserUrl, requestModel.ToJson(), null);
+		yield return www.SendRequest();
 		string session = www.ResponseString.Replace("\"", string.Empty);
 		if (session != string.Empty)
 		{

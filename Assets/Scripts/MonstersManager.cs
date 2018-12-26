@@ -67,7 +67,7 @@ public class MonstersManager : MonoBehaviour
 		var  obj = _fieldManager.GetGameObjectById(gameId);
 		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
-		var relativeSpeed = end ? 0 : FixedUpdate / FieldManager.TickSecond / speed;
+		var relativeSpeed = end ? 0 : (Time.deltaTime / FieldManager.TickSecond / speed) * 0.9f;
 		if (end)
 		{
 			ShowAnimation(MonsterAnimation.Attack); // TODO remove after presentation
@@ -85,7 +85,7 @@ public class MonstersManager : MonoBehaviour
 	{
 		foreach (var unit in _fieldManager.Field.State.Units)
 		{
-			_fieldManager.GetGameObjectById(unit.GameId).GetComponent<MonsterController>().ShowAnimation(animationType);
+			_fieldManager.GetGameObjectById(unit.GameId)?.GetComponent<MonsterController>()?.ShowAnimation(animationType);
 		}
 	}
 

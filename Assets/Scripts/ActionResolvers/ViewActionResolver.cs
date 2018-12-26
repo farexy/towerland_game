@@ -76,7 +76,6 @@ namespace Assets.Scripts.Models.Resolvers
             switch (action.ActionId)
             {
                 case ActionId.MonsterPlayerWins:
-                    _monstersManager.ShowAnimation(MonsterAnimation.Victory);
                     _fieldManager.End(PlayerSide.Monsters);
                     break;
                 case ActionId.TowerPlayerWins:

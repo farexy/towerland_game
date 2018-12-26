@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Ai;
 using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.GameActions;
 using Assets.Scripts.Models.GameField;
@@ -19,7 +20,7 @@ using IActionResolver = Assets.Scripts.Models.Resolvers.IActionResolver;
 
 public class FieldManager : MonoBehaviour
 {
-	public const float TickSecond = 0.4f;
+	public const float TickSecond = 0.5f;
 	private readonly Quaternion Quaternion = Quaternion.Euler(90, 90, 270);
 	
 	public GameObject Ground;
@@ -36,6 +37,7 @@ public class FieldManager : MonoBehaviour
 	private bool _isEnding;
 	private IStatsLibrary _statsLibrary;
 	private GameProcessNetworkWorker _gameProcessNetworkWorker;
+	private AiService _aiService;
 	
 	private MonstersManager _monstersManager;
 	private TowerManager _towerManager;
@@ -56,22 +58,10 @@ public class FieldManager : MonoBehaviour
 
 	private IActionResolver _stateResolver;
 	private IActionResolver _viewResolver;
-
-	private readonly GameObjectType[] FlyingObjects = new[] {GameObjectType.Unit_Dragon};
 	
 	// Use this for initialization
 	void Start ()
 	{
-		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
-		_battleId = LocalStorage.CurrentBattleId;
-		_session = LocalStorage.Session;
-		Side = LocalStorage.CurrentSide;
-		_statsLibrary = LocalStorage.StatsLibrary;
-		_pool = GetComponent<ObjectPool>();
-		_gameObjects = new Dictionary<int, GameObjectScript>();
-		_monstersManager = GetComponent<MonstersManager>();
-		_towerManager = GetComponent<TowerManager>();
-		Resources = new ResourcesCache();
 		AvailableObjects = new HashSet<GameObjectType>
 		{
 			GameObjectType.Unit_Skeleton,
@@ -90,8 +80,24 @@ public class FieldManager : MonoBehaviour
 			GameObjectType.Tower_Poisoning,
 		};
 
+		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
+		_battleId = LocalStorage.CurrentBattleId;
+		_session = LocalStorage.Session;
+		Side = LocalStorage.CurrentSide;
+		_statsLibrary = LocalStorage.StatsLibrary;
+		_pool = GetComponent<ObjectPool>();
+		_gameObjects = new Dictionary<int, GameObjectScript>();
+		_monstersManager = GetComponent<MonstersManager>();
+		_towerManager = GetComponent<TowerManager>();
+		_aiService = new AiService(_statsLibrary, this);
+		Resources = new ResourcesCache();
+
 		StartCoroutine(Init());
 		StartCoroutine(NetworkWorker());
+		if (ComputerPlayer.Active)
+		{
+			StartCoroutine(ComputerPlayerWorker());
+		}
 	}
 	
 	private void InstantiateField()
@@ -157,7 +163,7 @@ public class FieldManager : MonoBehaviour
 			{
 				var obj = _gameObjects[unit.GameId];
 
-				obj.transform.position = FlyingObjects.Contains(obj.Type)
+				obj.transform.position = _statsLibrary.GetUnitStats(obj.Type).IsAir
 					? CoordinationHelper.GetViewPoint3(unit.Position)
 					: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);
 				
@@ -169,9 +175,9 @@ public class FieldManager : MonoBehaviour
 			obj1.GameId = unit.GameId;
 			_gameObjects.Add(unit.GameId, obj1);
 			_monstersManager.ShowAnimation(unit.GameId, MonsterAnimation.Spawn);
-			obj1.transform.position = FlyingObjects.Contains(obj1.Type)
+			obj1.transform.position = _statsLibrary.GetUnitStats(obj1.Type).IsAir
 				? CoordinationHelper.GetViewPoint3(unit.Position)
-				: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);	
+				: (Vector3) CoordinationHelper.GetViewPoint(unit.Position);
 		}
 		//delete unexisting
 //		foreach (var gId in _gameObjects.Keys.ToArray())
@@ -186,7 +192,7 @@ public class FieldManager : MonoBehaviour
 
 	public GameObjectScript GetGameObjectById(int id)
 	{
-		return _gameObjects[id];
+		return _gameObjects.ContainsKey(id) ? _gameObjects[id] : null;
 	}
 
 	public bool TryGetGameObjectById(int id, out GameObjectScript obj)
@@ -224,7 +230,7 @@ public class FieldManager : MonoBehaviour
 		{
 			return;
 		}
-		StartCoroutine(PostCommand(Selected, position));
+		StartCoroutine(PostCommand(Selected, position, LocalStorage.Session));
 	}
 	
 	private IEnumerator StartShow()
@@ -242,7 +248,7 @@ public class FieldManager : MonoBehaviour
 		RemoveGameObject(id);
 	}
 
-	private IEnumerator PostCommand(GameObjectType type, Point? position, string cheat = null)
+	private IEnumerator PostCommand(GameObjectType type, Point? position, string session, string cheat = null)
 	{
 		var command = new StateChangeCommandRequestModel
 		{
@@ -256,8 +262,8 @@ public class FieldManager : MonoBehaviour
 				: null,
 			CheatCommand = cheat
 		};
-		var www = _gameProcessNetworkWorker.PostCommand(command);
-		yield return www;
+
+		yield return _gameProcessNetworkWorker.PostCommand(command, session);
 	}
 
 	private IEnumerator NetworkWorker()
@@ -270,6 +276,10 @@ public class FieldManager : MonoBehaviour
 				continue;
 			}
 			if (Field.StaticData.EndTimeUtc < ServerTime.Now)
+			{
+				yield return TryPostEnd();
+			}
+			if (Field.State.Castle.Health <= 0 && _tickCount > 0)
 			{
 				yield return TryPostEnd();
 			}
@@ -310,13 +320,18 @@ public class FieldManager : MonoBehaviour
 				{
 					_stateResolver.Resolve(action);
 				}
-				catch (NullReferenceException ex)
+				catch (Exception ex)
 				{
 					Debug.LogError(ex);
 				}
-
-				yield return null;
-				_viewResolver.Resolve(action);
+				try
+				{
+					_viewResolver.Resolve(action);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError(ex);
+				}
 			}
 			_tickCount++;
 			yield return new WaitForSeconds(TickSecond);
@@ -359,6 +374,7 @@ public class FieldManager : MonoBehaviour
 	{
 		Winner = playerSide;
 		yield return new WaitForSeconds(5);
+		_isEnding = false;
 		SceneManager.LoadScene("StartPages");
 	}
 
@@ -380,5 +396,18 @@ public class FieldManager : MonoBehaviour
 		Height = Field.StaticData.Height;
 		CoordinationHelper.Init(Width, Height);
 		InstantiateField();
+	}
+
+	private IEnumerator ComputerPlayerWorker()
+	{
+		while (!_isEnding)
+		{
+			yield return new WaitForSeconds(TickSecond * 4);
+			var objectToAdd = _aiService.TryAddGameObject();
+			if (objectToAdd != GameObjectType.Undefined)
+			{
+				yield return StartCoroutine(PostCommand(objectToAdd, null, ComputerPlayer.SessionKey));
+			}
+		}
 	}
 }

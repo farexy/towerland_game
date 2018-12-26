@@ -2,7 +2,7 @@
 {
     public static class ConfigurationManager
     {
-        public const bool Debug = true;
+        public const bool Debug = false;
         //public const string Server = "http://localhost:64283";
         public static string Server { get; set; }
 
