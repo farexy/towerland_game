@@ -10,6 +10,9 @@ using UnityEngine;
 
 public class TowerManager : MonoBehaviour
 {
+	private const int Width = 50;
+	private const int Height = 30;
+
 	private const float WhizzbangSpeed = 0.25f;
 	private const float BurstSpeed = 0.1f;
 
@@ -22,6 +25,38 @@ public class TowerManager : MonoBehaviour
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = LocalStorage.StatsLibrary;
 		_pool = GetComponent<ObjectPool>();
+	}
+
+	private void OnGUI()
+	{
+		if (_fieldManager.Field == null)
+		{
+			return;
+		}
+
+		try
+		{
+			foreach (var tower in _fieldManager.Field.State.Towers)
+			{
+				GameObjectScript unitObj;
+				if (!_fieldManager.TryGetGameObjectById(tower.GameId, out unitObj))
+				{
+					continue;
+				}
+				var screenPos = Camera.main.WorldToScreenPoint(unitObj.transform.position);
+
+				SetTowerEffectColor(tower);
+				if (tower.Effect != null && tower.Effect.Id != EffectId.None)
+				{
+					var effectImg = _fieldManager.Resources.LoadTexture(tower.Effect.Id.ToString());
+					GUI.Label(new Rect(screenPos.x, Screen.height - screenPos.y - Height / 2, Width, Height), new GUIContent(effectImg));
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.LogError(ex);
+		}
 	}
 
 	public void ShowAttack(Vector2 to, int towerId)
@@ -90,5 +125,15 @@ public class TowerManager : MonoBehaviour
 		yield return new WaitWhile(() => particles.isPlaying);
 		explosionTransform.localScale /= scale;
 		_pool.PutToPool(explosion);
+	}
+	
+	private void SetTowerEffectColor(Tower tower)
+	{
+		if (tower.Effect.Id != EffectId.None)
+		{
+			switch (tower.Effect.Id)
+			{
+			}
+		}
 	}
 }

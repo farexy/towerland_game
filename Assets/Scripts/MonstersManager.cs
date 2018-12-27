@@ -11,7 +11,6 @@ public class MonstersManager : MonoBehaviour
 {
 	private const int Width = 50;
 	private const int Height = 30;
-	private const float FixedUpdate = 0.02f;
 	
 	private IStatsLibrary _statsLibrary;
 	private FieldManager _fieldManager;
@@ -105,6 +104,8 @@ public class MonstersManager : MonoBehaviour
 						break;
 					case EffectId.UnitPoisoned:
 						GUI.contentColor = Color.green;
+						break;
+					case EffectId.SkillsDisabled:
 						break;
 				}
 			}

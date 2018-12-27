@@ -69,7 +69,7 @@ public class FieldManager : MonoBehaviour
 			GameObjectType.Unit_Orc,
 			GameObjectType.Unit_Goblin,
 			GameObjectType.Unit_Dragon,
-			GameObjectType.Unit_Golem,
+			GameObjectType.Unit_Demon,
 			GameObjectType.Unit_Necromancer,
 
 			GameObjectType.Tower_Usual,
@@ -346,7 +346,7 @@ public class FieldManager : MonoBehaviour
 
 	public void Cheat()
 	{
-		StartCoroutine(PostCommand(GameObjectType.Undefined, null, "addm"));
+		StartCoroutine(PostCommand(GameObjectType.Undefined, null, _session, "addm"));
 	}
 
 	private IEnumerator TryPostEnd()

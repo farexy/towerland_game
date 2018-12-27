@@ -10,5 +10,6 @@ namespace Assets.Scripts.Models.State
     [JsonProperty("b")] public Guid BattleId { set; get; }
     [JsonProperty("u")] public IEnumerable<UnitCreationOption> UnitCreationOptions { set; get; }
     [JsonProperty("t")] public IEnumerable<TowerCreationOption> TowerCreationOptions { set; get; }
+    [JsonProperty("c")] public string CheatCommand { get; set; }
   }
 }
