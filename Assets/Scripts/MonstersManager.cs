@@ -63,10 +63,9 @@ public class MonstersManager : MonoBehaviour
 
 	public void MoveUnit(int gameId, Point pos, EffectId effect)
 	{
-		var  obj = _fieldManager.GetGameObjectById(gameId);
-		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
+		var obj = _fieldManager.GetGameObjectById(gameId);
 		bool end = _fieldManager.Field.StaticData.Finish == pos;
-		var relativeSpeed = end ? 0 : (Time.deltaTime / FieldManager.TickSecond / speed) * 0.9f;
+		var relativeSpeed = end ? 0 : GetUnitSpeed(obj);
 		if (end)
 		{
 			ShowAnimation(MonsterAnimation.Attack); // TODO remove after presentation
@@ -109,5 +108,13 @@ public class MonstersManager : MonoBehaviour
 						break;
 				}
 			}
+	}
+
+	private float GetUnitSpeed(GameObjectScript obj)
+	{
+		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
+		var appliedEffect = _fieldManager.Field[obj.GameId].Effect;
+		var debuff = appliedEffect.Id == EffectId.UnitFreezed ? appliedEffect.EffectValue : 1;
+		return (float)(Time.deltaTime / FieldManager.TickSecond / (speed * debuff) * 0.9f);
 	}
 }

@@ -52,9 +52,11 @@ public class UIManager : MonoBehaviour
 		_fieldManager = GetComponent<FieldManager>();
 		_statsLibrary = LocalStorage.StatsLibrary;
 		_monsterTypes = _fieldManager.AvailableObjects
-			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit);
+			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Unit && t != GameObjectType.Unit)
+			.OrderBy(t => _statsLibrary.GetUnitStats(t).Cost);
 		_towerTypes = _fieldManager.AvailableObjects
-			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Tower && t != GameObjectType.Tower);
+			.Where(t => GameObjectLogical.ResolveType(t) == GameObjectType.Tower && t != GameObjectType.Tower)
+			.OrderBy(t => _statsLibrary.GetTowerStats(t).Cost);
 		_skillTextBuilder = new SkillTextBuilder();
 	}
 	
