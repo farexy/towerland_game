@@ -161,7 +161,7 @@ public class UIManager : MonoBehaviour
 	private void InitDetailsPanel()
 	{
 		DetailsPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Screen.width / 3f);
-		DetailsPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height);
+		DetailsPanel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Screen.height / 1.5f);
 		
 		_iconImg = GameObject.Find("icon_img").GetComponent<Image>();
 		_nameText = GameObject.Find("name_text").GetComponent<Text>();
@@ -199,7 +199,6 @@ public class UIManager : MonoBehaviour
 			_offDefTypeText.text = "Attack type: " + stats.Attack;
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Range: " + stats.Range;
-			_specialText.fontSize = 12;
 			_specialText.text = _skillTextBuilder.BuildSkillText(stats.Skill, selected);
 		}
 		else
@@ -211,7 +210,6 @@ public class UIManager : MonoBehaviour
 			_offDefTypeText.text = "Defence type: " + stats.Defence;
 			_damageText.text = "Damage: " + stats.Damage;
 			_healthRangeText.text = "Health: " + stats.Health;
-			_specialText.fontSize = 14;
 			_specialText.text = _skillTextBuilder.BuildSkillText(stats.Skill, selected);
 		}
 	}

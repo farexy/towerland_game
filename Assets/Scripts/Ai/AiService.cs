@@ -39,7 +39,8 @@ namespace Ai
         if (GameMath.CalcProbableEvent(33))
         {
           var monsterToAdd = available.FirstOrDefault(m => GetCost(m) == available.Max(GetCost));
-          if (monsterToAdd != GameObjectType.Undefined && _addedByType[monsterToAdd] < _limit)
+          if (monsterToAdd != GameObjectType.Undefined && _addedByType[monsterToAdd] < _limit
+              && _fieldManager.Field.State.Units.Count(u => u.Type == monsterToAdd) < _limit)
           {
             _addedByType[monsterToAdd]++;
             return monsterToAdd;

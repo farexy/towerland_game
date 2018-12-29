@@ -104,8 +104,6 @@ public class MonstersManager : MonoBehaviour
 					case EffectId.UnitPoisoned:
 						GUI.contentColor = Color.green;
 						break;
-					case EffectId.SkillsDisabled:
-						break;
 				}
 			}
 	}
