@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace Assets.Scripts.Models.Effects
 {
@@ -14,6 +15,48 @@ namespace Assets.Scripts.Models.Effects
     public static SpecialEffect Empty
     {
       get { return new SpecialEffect {Id = EffectId.None, Duration = 0}; }
+    }
+
+    public BuffType GetBuffOrDebuffType()
+    {
+      return GetBuffOrDebuffType(Id);
+    }
+
+    public static BuffType GetBuffOrDebuffType(EffectId effectId)
+    {
+      switch (effectId)
+      {
+        case EffectId.None:
+          return BuffType.None;
+        case EffectId.SkillsDisabled:
+          return BuffType.SkillDebuff;
+        case EffectId.UnitFreezed:
+          return BuffType.SpeedDebuff;
+        case EffectId.UnitPoisoned:
+          return BuffType.ConstantDamageDebuff;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(effectId), effectId, null);
+      }
+    }
+    
+    public enum BuffType
+    {
+      None,
+      SpeedBuff,
+      SpeedDebuff,
+      ConstantHealBuff,
+      ConstantDamageDebuff,
+      SkillDebuff
+    }
+    
+    public object Clone()
+    {
+      return new SpecialEffect
+      {
+        Id = Id,
+        Duration = Duration,
+        EffectValue = EffectValue
+      };
     }
   }
 }

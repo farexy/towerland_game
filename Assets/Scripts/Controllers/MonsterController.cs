@@ -65,7 +65,7 @@ public class MonsterController : MonoBehaviour
     {
 	    var distance = Vector3.Distance(transform.position, _direction);
 	    var currSpeed = distance > 1 ? _speed * distance : _speed;
-      Vector2 p = Vector2.MoveTowards(transform.position, _direction, currSpeed);
+      Vector2 p = Vector2.MoveTowards(transform.position, _direction, currSpeed * Time.deltaTime);
       GetComponent<Rigidbody2D>().MovePosition(p);
     }
 

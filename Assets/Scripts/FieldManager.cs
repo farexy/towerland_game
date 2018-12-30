@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic; 
 using Ai;
 using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.GameActions;
@@ -29,6 +28,7 @@ public class FieldManager : MonoBehaviour
 	public GameObject Castle;
 
 	private Coroutine _resolver;
+	private Coroutine _tickTimer;
 	private int _revision;
 	private Guid _battleId;
 	private string _session;
@@ -294,17 +294,26 @@ public class FieldManager : MonoBehaviour
 				{
 					StopCoroutine(_resolver);
 				}
+
+				if (_tickTimer != null)
+				{
+					StopCoroutine(_tickTimer);
+				}
 				RenderFieldState();
 				_resolver = StartCoroutine(ResolveActions(ticks.ActionsByTicks));
+				_tickTimer = StartCoroutine(TickTimer());
 			}
 			yield return new WaitForSeconds(0.4f);
 		}
 	}
 
-	private IEnumerator Tick()
+	private IEnumerator TickTimer()
 	{
-		yield return new WaitForSeconds(TickSecond);
-		_tickCount++;
+		while (_tickCount < int.MaxValue)
+		{
+			yield return new WaitForSeconds(TickSecond);
+			_tickCount++;
+		}
 	}
 	
 	private IEnumerator ResolveActions(IEnumerable<GameTick> actionList)
@@ -312,8 +321,7 @@ public class FieldManager : MonoBehaviour
 		_tickCount = 0;
 		foreach (var tick in actionList)
 		{
-			//var currentTick = _tickCount;
-			//StartCoroutine(Tick());
+			var currentTick = _tickCount;
 			foreach (var action in tick.Actions)
 			{
 				try
@@ -333,9 +341,9 @@ public class FieldManager : MonoBehaviour
 					Debug.LogError(ex);
 				}
 			}
-			_tickCount++;
-			yield return new WaitForSeconds(TickSecond);
-			//yield return new WaitUntil(() => currentTick < _tickCount);
+			//_tickCount++;
+			//yield return new WaitForSeconds(TickSecond);
+			yield return new WaitUntil(() => currentTick < _tickCount);
 		}
 	}
 

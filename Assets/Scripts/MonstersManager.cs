@@ -110,9 +110,10 @@ public class MonstersManager : MonoBehaviour
 
 	private float GetUnitSpeed(GameObjectScript obj)
 	{
-		var speed = _statsLibrary.GetUnitStats(obj.Type).Speed;
+		var statsSpeed = _statsLibrary.GetUnitStats(obj.Type).Speed;
 		var appliedEffect = _fieldManager.Field[obj.GameId].Effect;
-		var debuff = appliedEffect.Id == EffectId.UnitFreezed ? appliedEffect.EffectValue : 1;
-		return (float)(Time.deltaTime / FieldManager.TickSecond / (speed * debuff) * 0.9f);
+		var debuff = appliedEffect.GetBuffOrDebuffType() == SpecialEffect.BuffType.SpeedDebuff 
+			? appliedEffect.EffectValue : 1;
+		return (float)(1 / (FieldManager.TickSecond * statsSpeed * debuff));
 	}
 }
