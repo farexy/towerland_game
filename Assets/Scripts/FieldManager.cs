@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Linq;
 using Ai;
 using Assets.Scripts.Models.Client;
 using Assets.Scripts.Models.GameActions;
@@ -180,14 +181,14 @@ public class FieldManager : MonoBehaviour
 				: (Vector3) CoordinationHelper.GetViewPoint(unit.Position);
 		}
 		//delete unexisting
-//		foreach (var gId in _gameObjects.Keys.ToArray())
-//		{
-//			if (!Field.HasObject(gId))
-//			{
-//				Debug.Log("Garbage collected " + gId);
-//				RemoveGameObject(gId);
-//			}
-//		}
+		foreach (var gId in _gameObjects.Keys.ToArray())
+		{
+			if (!Field.HasObject(gId))
+			{
+				Debug.Log("Garbage collected " + gId);
+				RemoveGameObject(gId);
+			}
+		}
 	}
 
 	public GameObjectScript GetGameObjectById(int id)
