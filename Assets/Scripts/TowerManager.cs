@@ -79,7 +79,7 @@ public class TowerManager : MonoBehaviour
 
 	public void ShowCollapse(int towerId)
 	{
-		StartCoroutine(ShowExplosion(CoordinationHelper.GetViewPoint3(_fieldManager.Field[towerId].Position), 1.5f));
+		StartCoroutine(ShowExplosion(CoordinationHelper.GetViewPoint3(_fieldManager.Field[towerId].Position, -0.3f), 1.5f));
 	}
 
 	private IEnumerator WhizzbangMovement(Rigidbody2D whizzbang, Vector3 to, float speed, bool explosion)

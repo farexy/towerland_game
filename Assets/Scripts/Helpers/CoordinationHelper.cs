@@ -24,9 +24,9 @@ namespace Helpers
             return new Vector2(point.Y - _height / 2, point.X - _width / 2);
         }
 
-        public static Vector3 GetViewPoint3(Point point)
+        public static Vector3 GetViewPoint3(Point point, float z)
         {
-            return new Vector3(point.Y - _height / 2, point.X - _width / 2, -0.7f);
+            return new Vector3(point.Y - _height / 2, point.X - _width / 2);
         }
         
         public static bool DifferentFloats(float f1, float f2)
