@@ -8,6 +8,7 @@ namespace Assets.Scripts.Models.Effects
     FreezesUnit = 101,
     PoisonsUnit = 110,
     ExtraDamageUnit = 201,
+    ShurikenAttack = 251,
     BlocksUnitSkills = 301,
     BlocksUnitSkillsInRange = 302,
 

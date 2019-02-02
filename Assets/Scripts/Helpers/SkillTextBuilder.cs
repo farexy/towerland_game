@@ -36,6 +36,9 @@ namespace Helpers
         case SkillId.ExtraDamageUnit:
           sb.Append($" make {skill.BuffValue}x extra damage");
           break;
+        case SkillId.ShurikenAttack:
+          sb.Append("Attacks units at the neighbour positions if any");
+          break;
         case SkillId.BlocksUnitSkills:
           sb.Append("Blocks unit skills on attack");
           break;

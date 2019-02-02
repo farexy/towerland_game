@@ -81,6 +81,7 @@ public class FieldManager : MonoBehaviour
 			GameObjectType.Tower_FortressWatchtower,
 			GameObjectType.Tower_Magic,
 			GameObjectType.Tower_Poisoning,
+			GameObjectType.Tower_Orc
 		};
 
 		_gameProcessNetworkWorker = new GameProcessNetworkWorker();
