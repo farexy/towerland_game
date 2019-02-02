@@ -10,6 +10,7 @@ namespace Assets.Scripts.Models.GameField
     Entrance = 2,
     Castle = 3,
 
-    Tree = 10
+    Stone = 6,
+    Tree = 7
   }
 }

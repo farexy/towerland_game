@@ -39,7 +39,13 @@ public class MonsterController : MonoBehaviour
 
 		Move();
 	}
-
+	
+	public void SetMovement(Vector2 direction)
+	{
+		_direction = direction;
+		ChangeDirection(transform.position, direction);
+	}
+	
     public void SetMovement(float speed, Vector2 direction)
     {
         _direction = direction;

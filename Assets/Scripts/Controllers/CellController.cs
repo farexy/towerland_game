@@ -61,6 +61,11 @@ public class CellController : MonoBehaviour
 		}
 	}
 
+	public void SetFieldObject(FieldObject fieldObject)
+	{
+		Object = fieldObject;
+	}
+
 	private bool IsAvailableForTower()
 	{
 		return Object == FieldObject.Ground && _manager.Field.State.Towers.All(t => t.Position != Point);

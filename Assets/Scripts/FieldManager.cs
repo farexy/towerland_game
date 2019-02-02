@@ -27,6 +27,8 @@ public class FieldManager : MonoBehaviour
 	public GameObject Road;
 	public GameObject Entrance;
 	public GameObject Castle;
+	public GameObject Stone;
+	public GameObject Tree;
 
 	private Coroutine _resolver;
 	private Coroutine _tickTimer;
@@ -136,6 +138,15 @@ public class FieldManager : MonoBehaviour
 						tmp = Instantiate(Castle, CoordinationHelper.GetViewPoint(point), Quaternion);
 						tmp.transform.parent = transform;
 					}
+					if (Field.StaticData.Cells[i, j].Object == FieldObject.Stone)
+					{
+						tmp = Instantiate(Stone, CoordinationHelper.GetViewPoint3(point, -0.2f), Quaternion);
+						tmp.transform.parent = transform;
+						tmp = Instantiate(Ground, CoordinationHelper.GetViewPoint(point), Quaternion);
+						tmp.GetComponent<CellController>().Point = new Point(i, j);
+						tmp.GetComponent<CellController>().SetFieldObject(FieldObject.Stone);
+						tmp.transform.parent = transform;
+					}
 				}
 				catch (IndexOutOfRangeException e)
 				{
@@ -163,12 +174,8 @@ public class FieldManager : MonoBehaviour
 			if (_gameObjects.ContainsKey(unit.GameId))
 			{
 				var obj = _gameObjects[unit.GameId];
-
-				obj.transform.position = _statsLibrary.GetUnitStats(obj.Type).IsAir
-					? CoordinationHelper.GetViewPoint3(unit.Position)
-					: (Vector3)CoordinationHelper.GetViewPoint(unit.Position);
 				
-				obj.GetComponent<MonsterController>().SetMovement(0, obj.transform.position);
+				obj.GetComponent<MonsterController>().SetMovement(CoordinationHelper.GetViewPoint(unit.Position));
 				continue;
 			}
 
@@ -177,7 +184,7 @@ public class FieldManager : MonoBehaviour
 			_gameObjects.Add(unit.GameId, obj1);
 			_monstersManager.ShowAnimation(unit.GameId, MonsterAnimation.Spawn);
 			obj1.transform.position = _statsLibrary.GetUnitStats(obj1.Type).IsAir
-				? CoordinationHelper.GetViewPoint3(unit.Position)
+				? CoordinationHelper.GetViewPoint3(unit.Position, -0.7f)
 				: (Vector3) CoordinationHelper.GetViewPoint(unit.Position);
 		}
 		//delete unexisting
