@@ -64,6 +64,9 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.TowerKills:
                     _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
                     break;
+                case ActionId.TowerAppears:
+                    _fieldManager.RenderFieldState();
+                    break;
                 case ActionId.TowerCollapses:
                     _towerManager.ShowCollapse(action.TowerId);
                     _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 1.5f);

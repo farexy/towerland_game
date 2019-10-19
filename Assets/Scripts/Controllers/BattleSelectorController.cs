@@ -43,7 +43,7 @@ namespace Controllers
 	
         public void OnPvEButtonClick()
         {
-            StartCoroutine(FindMultiBattle());
+            StartCoroutine(FindPvEBattle());
         }
 
         public void OnBackButton()
@@ -80,6 +80,27 @@ namespace Controllers
                 var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.HelpSession);
                 yield return www3.Send();
             }
+
+            LoadBattle(resp.BattleId, resp.Side, false);
+        }
+
+        private IEnumerator FindPvEBattle()
+        {
+            _searchForBattle = true;
+            var www = new HttpRequest(ConfigurationManager.SearchSinglePlay, null, LocalStorage.Session);
+            yield return www.Send();
+
+            var resp = new BattleSearchCheckResponseModel();
+            while (!resp.Found)
+            {
+                yield return new WaitForFixedUpdate();
+                var www2 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, LocalStorage.Session);
+                yield return www2.Send();
+                resp = JsonConvert.DeserializeObject<BattleSearchCheckResponseModel>(www2.ResponseString);
+            }
+
+            var www3 = new HttpRequest(ConfigurationManager.CheckSearchBattleUrl, ComputerPlayer.SessionKey);
+            yield return www3.Send();
 
             LoadBattle(resp.BattleId, resp.Side, false);
         }

@@ -16,6 +16,8 @@
             get { return Server + "/battlesearch/multibattle/"; }
         }
 
+        public static string SearchSinglePlay => Server + "/battlesearch/singleplay/";
+
         public static string CheckSearchBattleUrl
         {
             get { return Server + "/battlesearch/check/"; }
