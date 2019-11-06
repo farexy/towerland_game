@@ -7,8 +7,13 @@ namespace Assets.Scripts.Network
   public class WwwWrapper
   {
     private const string SessionHeader = "user-session";	
-    private readonly WWW _www;	
- 
+    private readonly WWW _www;
+
+    public WwwWrapper(string url)
+    {
+      _www = new WWW(url);
+    }
+    
     public WwwWrapper(string url, string session)	
     {	
       _www = new WWW(url, null, new Dictionary<string, string>{{SessionHeader, session ?? string.Empty}});	

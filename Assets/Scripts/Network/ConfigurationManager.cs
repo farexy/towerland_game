@@ -6,69 +6,34 @@
         //public const string Server = "http://localhost:64283";
         public static string Server { get; set; }
 
-        public static string SearchBattleUrl
-        {
-            get { return Server + "/battlesearch/"; }
-        }
-        
-        public static string SearchMultiBattleUrl
-        {
-            get { return Server + "/battlesearch/multibattle/"; }
-        }
+        public static string SearchBattleUrl => Server + "/battlesearch/";
 
-        public static string CheckSearchBattleUrl
-        {
-            get { return Server + "/battlesearch/check/"; }
-        }
+        public static string SinglePlayUrl => Server + "/battlesearch/singleplay";
 
-        public static string InitFieldUrl
-        {
-            get { return Server + "/game/{0}/init"; }
-        }
+        public static string SearchMultiBattleUrl => Server + "/battlesearch/multibattle/";
 
-        public static string GameProcessCommandUrl
-        {
-            get { return Server + "/game/command"; }
-        }
+        public static string CheckSearchBattleUrl => Server + "/battlesearch/check/";
 
-        public static string ActionsByTicksUrl
-        {
-            get { return Server + "/game/{0}/ticks/"; }
-        }
+        public static string InitFieldUrl => Server + "/game/{0}/init";
 
-        public static string GameCheckStateChanged
-        {
-            get { return Server + "/game/{0}/checkstate/{1}"; }
-        }
+        public static string GameProcessCommandUrl => Server + "/game/command";
 
-        public static string TryEndUrl
-        {
-            get { return Server + "/game/{0}/tryend"; }
-        }
+        public static string ActionsByTicksUrl => Server + "/game/{0}/ticks/";
 
-        public static string LoginUserUrl
-        {
-            get { return Server + "/user/signin"; }
-        }
+        public static string GameCheckStateChanged => Server + "/game/{0}/checkstate/{1}";
 
-        public static string SignUpUserUrl
-        {
-            get { return Server + "/user/signup"; }
-        }
+        public static string TryEndUrl => Server + "/game/{0}/tryend";
 
-        public static string UserRatingUrl
-        {
-            get { return Server + "/user/rating"; }
-        }
+        public static string LoginUserUrl => Server + "/user/signin";
 
-        public static string UserExpUrl
-        {
-            get { return Server + "/user/exp"; }
-        }
+        public static string SignUpUserUrl => Server + "/user/signup";
 
-        public static string StaticDataUrl
-        {
-            get { return Server + "/data/static"; }
-        }
+        public static string UserRatingUrl => Server + "/user/rating";
+
+        public static string UserExpUrl => Server + "/user/exp";
+
+        public static string StaticDataUrl => Server + "/data/static";
+
+        public static string ServerUrlStore => "https://towerland.s3.eu-central-1.amazonaws.com/server_urls.txt";
     }
 }

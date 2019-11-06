@@ -85,7 +85,7 @@ public class UIManager : MonoBehaviour
 				bool notEnoughMoney = _fieldManager.PlayerMoney < cost;
 				GUI.backgroundColor = notEnoughMoney 
 					? Color.black
-					:selected == t ? Color.red : Color.clear;
+					: selected == t ? Color.red : Color.clear;
 				
 				if (GUI.Button(new Rect(StartX + x, Y, Width, Height), "") && !notEnoughMoney)
 				{
