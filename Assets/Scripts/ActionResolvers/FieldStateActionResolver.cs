@@ -78,12 +78,12 @@ namespace Assets.Scripts.Models.Resolvers
                     _field[action.TowerId].Effect = SpecialEffect.Empty;
                     break;
 
+                case ActionId.TowerAppears:
+                    _field.AddGameObject(action.GoTower);
+                    break;
+
                 case ActionId.TowerCollapses:
-                    Task.Run(async () =>
-                    {
-                        await Task.Delay(500);
-                        _field.RemoveGameObject(action.TowerId);
-                    });
+                    _field.RemoveGameObject(action.TowerId);
                     break;
             }
         }

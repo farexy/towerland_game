@@ -10,6 +10,8 @@
 
         public static string SinglePlayUrl => Server + "/battlesearch/singleplay";
 
+        public static string SearchSinglePlay => Server + "/battlesearch/singleplay/";
+
         public static string SearchMultiBattleUrl => Server + "/battlesearch/multibattle/";
 
         public static string CheckSearchBattleUrl => Server + "/battlesearch/check/";

@@ -17,6 +17,9 @@
 
     TowerCollapses = 31,
 
+    TowerAppears = 41,
+
+
     Unit = 100,
     UnitMoves = 101,
 

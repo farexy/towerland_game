@@ -217,11 +217,18 @@ public class FieldManager : MonoBehaviour
 
 	public void RemoveGameObject(int id)
 	{
-		var obj = _gameObjects[id];
-		_gameObjects.Remove(id);
-		_pool.PutToPool(obj);
+		try
+		{
+			var obj = _gameObjects[id];
+			_gameObjects.Remove(id);
+			_pool.PutToPool(obj);
+		}
+		catch (KeyNotFoundException)
+		{
+			Debug.Log($"Object {id} not found when remove");
+		}
 	}
-	
+
 	public void RemoveGameObjectWithDelay(int id, float delaySec)
 	{
 		StartCoroutine(RemoveWithDelay(id, delaySec));
