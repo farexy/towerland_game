@@ -127,7 +127,7 @@ public class TowerManager : MonoBehaviour
 			case SkillId.PoisonsUnit:
 				return _pool.GetFromPool(GameObjectType.Whizzbang_Poison);
 			case SkillId.ExtraDamageUnit:
-				break;
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Spike);
 			case SkillId.ShurikenAttack:
 				return _pool.GetFromPool(GameObjectType.Whizzbang_Shuriken);
 		}
