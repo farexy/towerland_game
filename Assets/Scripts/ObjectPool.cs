@@ -17,7 +17,7 @@ public class ObjectPool : MonoBehaviour
 		_gameObjectsPool = new Dictionary<string, GameObjectScript>();
 		foreach (var x in GetSupportedObjects())
 		{
-			var cnt = GameObjectLogical.ResolveType(x) == GameObjectType.Whizzbang ? 10 : 4;
+			var cnt = GameObjectLogical.ResolveType(x) == GameObjectType.Whizzbang ? 7 : 4;
 			for (int i = 1; i <= cnt; i++)
 			{
 				var gameObjName = string.Format("{0}_{1}", x.ToString(), i);

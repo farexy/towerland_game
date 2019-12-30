@@ -16,16 +16,16 @@
     TowerEffectCanceled = 29,
 
     TowerCollapses = 31,
-
+    
     TowerAppears = 41,
-
+    
+    ShurikenAttacks = 81,
 
     Unit = 100,
     UnitMoves = 101,
 
     UnitDisappears = 201, //dies or attacks castle
     UnitReceivesDamage = 202,
-
     UnitGetsEffect = 210,
     UnitEffectCanceled = 290,
 

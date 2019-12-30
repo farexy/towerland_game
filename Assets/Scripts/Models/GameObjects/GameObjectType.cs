@@ -14,6 +14,8 @@
     Whizzbang_Frost = 22,
     Whizzbang_Magic = 23,
     Whizzbang_Poison = 24,
+    Whizzbang_Bomb = 25,
+    Whizzbang_Shuriken = 26,
     
     Explosion = 30,
 

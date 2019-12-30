@@ -13,8 +13,8 @@ public class TowerManager : MonoBehaviour
 	private const int Width = 50;
 	private const int Height = 30;
 
-	private const float WhizzbangSpeed = 0.25f;
-	private const float BurstSpeed = 0.1f;
+	private const float WhizzbangSpeed = 0.1f;
+	private const float BurstSpeed = 0.04f;
 
 	private FieldManager _fieldManager;
 	private IStatsLibrary _statsLibrary;
@@ -59,18 +59,35 @@ public class TowerManager : MonoBehaviour
 		}
 	}
 
-	public void ShowAttack(Vector2 to, int towerId)
+	public void ShowTowerAttack(Vector2 to, int towerId)
 	{
 		var towerType = _fieldManager.GetGameObjectById(towerId).Type;
-		var whizzbang = GetWhizzbang(towerType);
+		var whizzbang = GetWhizzbangByTower(towerType);
 		var isBurst = _statsLibrary.GetTowerStats(towerType).Attack == TowerStats.AttackType.Burst;
 		try
 		{
-			var body = whizzbang.GetComponent<Rigidbody2D>();
 			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody2D>().position;
-			whizzbang.transform.position = new Vector3(pos.x, pos.y, -0.5f);
-			var speed = isBurst ? BurstSpeed : WhizzbangSpeed;
-			StartCoroutine(WhizzbangMovement(body, to, speed, isBurst));
+			ShowAttack(pos, to, whizzbang, isBurst);
+		}
+		catch (NullReferenceException)
+		{
+		}
+	}
+	
+	public void ShowShurikenAttack(Vector2 from, Vector2 to)
+	{
+		var whizzbang = _pool.GetFromPool(GameObjectType.Whizzbang_Shuriken);
+		ShowAttack(from, to, whizzbang, false);
+	}
+	
+	private void ShowAttack(Vector2 from, Vector2 to, GameObjectScript whizzbang, bool isExplosion)
+	{
+		try
+		{
+			var body = whizzbang.GetComponent<Rigidbody2D>();
+			whizzbang.transform.position = new Vector3(from.x, from.y, -0.5f);
+			var speed = isExplosion ? BurstSpeed : WhizzbangSpeed;
+			StartCoroutine(WhizzbangMovement(body, to, speed, isExplosion));
 		}
 		catch (NullReferenceException)
 		{
@@ -100,17 +117,32 @@ public class TowerManager : MonoBehaviour
 		_pool.PutToPool(whizzbang.GetComponent<GameObjectScript>());
 	}
 
-	private GameObjectScript GetWhizzbang(GameObjectType towerType)
+	private GameObjectScript GetWhizzbangByTower(GameObjectType towerType)
 	{
 		var stats = _statsLibrary.GetTowerStats(towerType);
-		var attackType = stats.Attack;
-		return stats.Skill != SkillId.None && stats.Skill == SkillId.FreezesUnit
-			? _pool.GetFromPool(GameObjectType.Whizzbang_Frost)
-			: stats.Skill != SkillId.None && stats.Skill == SkillId.PoisonsUnit
-				? _pool.GetFromPool(GameObjectType.Whizzbang_Poison)
-				: attackType == TowerStats.AttackType.Magic
-					? _pool.GetFromPool(GameObjectType.Whizzbang_Magic)
-					: _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
+		switch (stats.Skill)
+		{
+			case SkillId.FreezesUnit:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Frost);
+			case SkillId.PoisonsUnit:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Poison);
+			case SkillId.ExtraDamageUnit:
+				break;
+			case SkillId.ShurikenAttack:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Shuriken);
+		}
+
+		switch (stats.Attack)
+		{
+			case TowerStats.AttackType.Usual:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Usual);
+			case TowerStats.AttackType.Magic:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Magic);
+			case TowerStats.AttackType.Burst:
+				return _pool.GetFromPool(GameObjectType.Whizzbang_Bomb);
+		}
+		
+		throw new ArgumentOutOfRangeException();
 	}
 
 	private IEnumerator ShowExplosion(Vector3 pos, float scale = 1)

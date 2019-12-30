@@ -56,10 +56,10 @@ namespace Assets.Scripts.Models.Resolvers
             {
                 case ActionId.TowerAttacks:
                     var unitPos = _fieldManager.GetGameObjectById(action.UnitId).GetComponent<Rigidbody2D>().position;
-                    _towerManager.ShowAttack(unitPos, action.TowerId);
+                    _towerManager.ShowTowerAttack(unitPos, action.TowerId);
                     break;
                 case ActionId.TowerAttacksPosition:
-                    _towerManager.ShowAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
+                    _towerManager.ShowTowerAttack(CoordinationHelper.GetViewPoint(action.Position), action.TowerId);
                     break;
                 case ActionId.TowerKills:
                     _monstersManager.ShowAnimation(action.UnitId, MonsterAnimation.Die);
@@ -70,6 +70,11 @@ namespace Assets.Scripts.Models.Resolvers
                 case ActionId.TowerCollapses:
                     _towerManager.ShowCollapse(action.TowerId);
                     _fieldManager.RemoveGameObjectWithDelay(action.TowerId, 1.5f);
+                    break;
+                case ActionId.ShurikenAttacks:
+                    var unit1Pos = _fieldManager.GetGameObjectById(action.UnitId).GetComponent<Rigidbody2D>().position;
+                    var unit2Pos = _fieldManager.GetGameObjectById(action.UnitId2).GetComponent<Rigidbody2D>().position;
+                    _towerManager.ShowShurikenAttack(unit1Pos, unit2Pos);
                     break;
             }
         }
