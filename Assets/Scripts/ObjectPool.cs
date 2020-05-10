@@ -47,6 +47,7 @@ public class ObjectPool : MonoBehaviour
 		var namePrefix = type.ToString();
 		var cnt = GameObjectLogical.ResolveType(type) == GameObjectType.Whizzbang ? 10 : 4;
 
+		return CreateCopy(namePrefix);
 		for (int i = 1; i <= cnt; i++)
 		{
 			var name = string.Format("{0}_{1}", namePrefix, i);

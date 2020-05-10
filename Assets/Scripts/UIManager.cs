@@ -19,10 +19,10 @@ public class UIManager : MonoBehaviour
 //	private const int Height = 120;
 //	private const int SmallHeight = 30;
 //	private const int NormalHeight = 80;
-	private const int Width = 75;
-	private const int Height = 70;
-	private const int SmallHeight = 20;
-	private const int NormalHeight = 40;
+	private const int Width = 150;
+	private const int Height = 140;
+	private const int SmallHeight = 40;
+	private const int NormalHeight = 80;
 
 	private IEnumerable<GameObjectType> _monsterTypes;
 	private IEnumerable<GameObjectType> _towerTypes;
@@ -102,6 +102,7 @@ public class UIManager : MonoBehaviour
 					}
 				}
 				GUI.backgroundColor = Color.gray;
+				GUI.skin.box.fontSize = 22;
 
 				GUI.Box(new Rect(StartX + x, Y + Height, Width, SmallHeight), new GUIContent(cost.ToString()));
 				x += Width;

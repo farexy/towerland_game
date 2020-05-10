@@ -66,7 +66,7 @@ public class TowerManager : MonoBehaviour
 		var isBurst = _statsLibrary.GetTowerStats(towerType).Attack == TowerStats.AttackType.Burst;
 		try
 		{
-			var pos = _fieldManager.GetGameObjectById(towerId).GetComponent<Rigidbody2D>().position;
+			var pos = _fieldManager.GetGameObjectById(towerId).transform.position;
 			ShowAttack(pos, to, whizzbang, isBurst);
 		}
 		catch (NullReferenceException)
